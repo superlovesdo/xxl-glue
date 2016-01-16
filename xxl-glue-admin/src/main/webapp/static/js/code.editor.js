@@ -61,8 +61,11 @@ define(function(require, exports, module) {
 				});
 		    }
 		}).modal('show');
-		
-		
+	});
+	
+	// 回溯-线上
+	$(".loadCodeInfo").on('click', function(){
+		editor.setValue(codeInfo_source);
 	});
 	
 });

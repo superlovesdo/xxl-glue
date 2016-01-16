@@ -20,6 +20,17 @@
 <div class="ui fixed inverted menu">
 	<div class="ui container">
 	    <a href="javascript:window.opener=null;window.open('','_self');window.close();" class="item" >关闭</a>
+	    
+	  	<div class="ui simple dropdown item">
+			版本回溯 <i class="dropdown icon"></i>
+			<div class="menu">
+				<a class="item loadCodeInfo" href="javascript:;">2015-10-02 11:30:34 ${codeInfo.remark} 【线上】</a>
+				<a class="item loadCodeLog" logId="1" href="javascript:;" >2015-10-02 11:30:34 更新线上配置</a>
+				<a class="item loadCodeLog" logId="2" href="javascript:;" >2015-10-02 11:30:34 新版本上线</a>
+				<div class="divider"></div>
+			</div>
+		</div>
+	    
 	    <a href="javascript:;" class="item right" id="save" >保存</a>
     </div>
 </div>
@@ -36,7 +47,7 @@
 		<form class="ui large form">
 			<div class="ui labeled input">
 		      	<div class="ui label">备注:</div>
-		      	<input type="text" id="codeInfo_remark" placeholder="请输入备注">
+		      	<input type="text" id="codeInfo_remark" placeholder="请输入备注" minlength="6" maxlength="50" >
 		    </div>
 		    <div class="ui error message"></div>
 		</form>
