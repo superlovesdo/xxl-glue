@@ -1,5 +1,6 @@
 package com.xxl.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xxl.controller.annotation.PermessionLimit;
 import com.xxl.core.model.CodeInfo;
+import com.xxl.core.model.CodeLog;
 import com.xxl.core.result.ReturnT;
 import com.xxl.service.ICodeService;
 
@@ -56,6 +58,12 @@ public class CodeController {
 	public String codeSourceEditor(Model model, int id){
 		CodeInfo codeInfo = codeService.loadCode(id);
 		model.addAttribute("codeInfo", codeInfo);
+		
+		if (codeInfo!=null) {
+			List<CodeLog> codeLogs = codeService.loadLogs(codeInfo.getName());
+			model.addAttribute("codeLogs", codeLogs);
+		}
+		
 		return "code/code.editor";
 	}
 	

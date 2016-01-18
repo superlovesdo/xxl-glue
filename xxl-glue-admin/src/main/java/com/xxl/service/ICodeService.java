@@ -1,8 +1,10 @@
 package com.xxl.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.xxl.core.model.CodeInfo;
+import com.xxl.core.model.CodeLog;
 import com.xxl.core.result.ReturnT;
 
 public interface ICodeService {
@@ -16,5 +18,7 @@ public interface ICodeService {
 	public ReturnT<String> updateCodeSource(CodeInfo codeInfo);
 	
 	public CodeInfo loadCode(int id);
+
+	public List<CodeLog> loadLogs(String name);
 
 }

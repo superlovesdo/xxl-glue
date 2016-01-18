@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xxl.core.model.CodeInfo;
+import com.xxl.core.model.CodeLog;
 import com.xxl.core.result.ReturnT;
 import com.xxl.dao.ICodeInfoDao;
+import com.xxl.dao.ICodeLogDao;
 import com.xxl.service.ICodeService;
 
 @Service
@@ -17,6 +21,8 @@ public class CodeServiceImpl implements ICodeService {
 	
 	@Autowired
 	private ICodeInfoDao codeInfoDao;
+	@Autowired
+	private ICodeLogDao codeLogDao;
 
 	@Override
 	public Map<String, Object> pageList(int offset, int pagesize, String name) {
@@ -42,10 +48,19 @@ public class CodeServiceImpl implements ICodeService {
 
 	@Override
 	public ReturnT<String> saveCodeInfo(CodeInfo codeInfo) {
-		CodeInfo codeInfo2 = codeInfoDao.loadCodeByName(codeInfo.getName());
-		if (codeInfo2!=null) {
+		// valid
+		if (StringUtils.isBlank(codeInfo.getName())) {
+			return new ReturnT<String>(500, "“Glue名称”不可为空");
+		}
+		if (StringUtils.isBlank(codeInfo.getRemark())) {
+			return new ReturnT<String>(500, "“Glue备注”不可为空");
+		}
+		// check old
+		CodeInfo codeInfo_old = codeInfoDao.loadCodeByName(codeInfo.getName());
+		if (codeInfo_old != null) {
 			return new ReturnT<String>(500, "“Code名称”已存在");
 		}
+		// save
 		int ret = codeInfoDao.save(codeInfo);
 		if (ret < 1) {
 			return new ReturnT<String>(500, "新增失败");
@@ -55,9 +70,32 @@ public class CodeServiceImpl implements ICodeService {
 
 	@Override
 	public ReturnT<String> updateCodeSource(CodeInfo codeInfo) {
+		// valid
+		if (codeInfo.getId() < 1) {
+			if (StringUtils.isBlank(codeInfo.getRemark())) {
+				return new ReturnT<String>(500, "参数异常");
+			}
+		}
+		if (StringUtils.isBlank(codeInfo.getRemark())) {
+			return new ReturnT<String>(500, "“Glue备注”不可为空");
+		}
+		// check old
+		CodeInfo codeInfo_old = codeInfoDao.loadCode(codeInfo.getId());
+		if (codeInfo_old==null) {
+			return new ReturnT<String>(500, "“Code”不存在");
+		}
+		// update
 		int ret = codeInfoDao.update(codeInfo);
 		if (ret < 1) {
 			return new ReturnT<String>(500, "更新失败");
+		}
+		// save old
+		try {
+			CodeLog codeLog = new CodeLog();
+			BeanUtils.copyProperties(codeLog, codeInfo_old);
+			codeLogDao.save(codeLog);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		return ReturnT.SUCCESS;
@@ -66,6 +104,11 @@ public class CodeServiceImpl implements ICodeService {
 	@Override
 	public CodeInfo loadCode(int id) {
 		return codeInfoDao.loadCode(id);
+	}
+
+	@Override
+	public List<CodeLog> loadLogs(String name) {
+		return codeLogDao.loadLogsByName(name);
 	}
 
 }

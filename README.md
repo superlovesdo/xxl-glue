@@ -5,6 +5,8 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-glue
 
 博客地址(内附使用教程)：http://www.cnblogs.com/xuxueli/p/5115036.html
 
+技术交流群(仅作技术交流)：367260654
+
 # 简介
 	基于JVM的敏捷开发平台，扩展JVM的动态语言支持，基于groovy实现；
 	在线编辑服务端代码，并且实时生效；

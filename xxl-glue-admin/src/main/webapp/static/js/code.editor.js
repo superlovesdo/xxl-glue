@@ -10,9 +10,6 @@ define(function(require, exports, module) {
 	editor.setTheme("ace/theme/idle_fingers");
 	editor.getSession().setMode("ace/mode/groovy");
 	
-	// 初始化页面
-	editor.setValue(codeInfo_source);
-	
 	$("#save").on('click', function(){
 		
 		$('#CodeSaveTips').modal({
@@ -37,15 +34,15 @@ define(function(require, exports, module) {
 				
 				var code = editor.getSession().getValue();
 				// or session.getValue
-				console.log(code);
+				//console.log(code);
 				
 				$.ajax({
 					type : 'POST',
 					url : base_url + 'code/updateCodeSource',
 					data : {
 						'id' : codeInfo_id,
-						'source' : code,
-						'remark' : codeInfo_remark
+						'remark' : codeInfo_remark,
+						'source' : code
 					},
 					dataType : "json",
 					success : function(data){
@@ -64,8 +61,11 @@ define(function(require, exports, module) {
 	});
 	
 	// 回溯-线上
-	$(".loadCodeInfo").on('click', function(){
-		editor.setValue(codeInfo_source);
+	$(".source").on('click', function(){
+		editor.setValue($('#'+$(this).attr('source')).val());
 	});
+	
+	// Glue source初始化
+	$('.source_online').click();
 	
 });

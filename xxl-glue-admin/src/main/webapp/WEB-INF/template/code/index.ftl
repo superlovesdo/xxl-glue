@@ -36,7 +36,7 @@
 		<table class="ui right aligned table" id="code_list" >
 			<thead>
 		        <th class="left aligned">id</th>
-		        <th>name</th>
+		        <th>Glue名称</th>
 		        <th>源码</th>
 		        <th>备注</th>
 		        <th>新增时间</th>

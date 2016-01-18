@@ -50,14 +50,12 @@
 	
 	<insert id="save" parameterType="com.xxl.core.model.CodeInfo" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_groovy_code_info (
-			id,
 			name,
 			source,
 			remark,
 			add_time,
 			update_time
 		) VALUES (
-			#{id}, 
 			#{name}, 
 			#{source},
 			#{remark},

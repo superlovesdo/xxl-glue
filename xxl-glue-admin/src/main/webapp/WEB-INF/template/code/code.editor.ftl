@@ -24,10 +24,15 @@
 	  	<div class="ui simple dropdown item">
 			版本回溯 <i class="dropdown icon"></i>
 			<div class="menu">
-				<a class="item loadCodeInfo" href="javascript:;">2015-10-02 11:30:34 ${codeInfo.remark} 【线上】</a>
-				<a class="item loadCodeLog" logId="1" href="javascript:;" >2015-10-02 11:30:34 更新线上配置</a>
-				<a class="item loadCodeLog" logId="2" href="javascript:;" >2015-10-02 11:30:34 新版本上线</a>
+				<a class="item source source_online" source="codeInfo_${codeInfo.id}" href="javascript:;">2015-10-02 11:30:34 ${codeInfo.remark}【ONLINE】</a>
+				<textarea id="codeInfo_${codeInfo.id}" style="display:none;" >${codeInfo.source}</textarea>
+				<#if codeLogs?exists>
 				<div class="divider"></div>
+				<#list codeLogs as codeLog>
+				<a class="item source" source="codeLogs_${codeLog.id}" href="javascript:;" >2015-10-02 11:30:34 ${codeLog.remark}</a>
+				<textarea id="codeLogs_${codeLog.id}" style="display:none;" >${codeLog.source}</textarea>
+				</#list>
+				</#if>
 			</div>
 		</div>
 	    
@@ -37,7 +42,6 @@
 
 <!-- editor -->
 <div id="ace-editor"></div>
-<textarea rows="3" cols="20" id="codeInfo_source" style="display:none;" >${codeInfo.source}</textarea>
 
 <!-- code保存提示 -->
 <div class="ui modal" id="CodeSaveTips" >
@@ -65,10 +69,8 @@
 	return;		
 </#if>
 
-// 更新字段
+// Glue Id
 var codeInfo_id = '${codeInfo.id}';
-var codeInfo_source = document.getElementById('codeInfo_source').value;
-var codeInfo_remark = "${codeInfo.remark}";
 
 // 加载js
 var base_url = '${request.contextPath}/';
