@@ -9,5 +9,7 @@ public interface ICodeLogDao {
 	public int save(CodeLog codeLog);
 	
 	public List<CodeLog> loadLogsByName(String name);
+
+	public int removeOldLogs(String name);
 	
 }

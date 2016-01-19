@@ -47,4 +47,16 @@
 		order by add_time desc
 	</select>
 	
+	<delete id="removeOldLogs" parameterType="java.lang.String" >
+		DELETE FROM xxl_groovy_code_log
+		WHERE id NOT in(
+			SELECT id FROM(
+				SELECT id FROM xxl_groovy_code_log
+				WHERE `name` = #{name}
+				ORDER BY update_time desc
+				LIMIT 0, 10
+			) t1
+		)
+	</delete>
+	
 </mapper>
