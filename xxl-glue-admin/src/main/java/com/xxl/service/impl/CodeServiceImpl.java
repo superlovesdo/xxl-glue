@@ -97,6 +97,8 @@ public class CodeServiceImpl implements ICodeService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// remove log more than 10
+		codeLogDao.removeOldLogs(codeInfo_old.getName());
 		
 		return ReturnT.SUCCESS;
 	}
