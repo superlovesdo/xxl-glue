@@ -35,16 +35,17 @@ public class SpringSupport implements ApplicationContextAware {
 			}
 			
 			Object fieldBean = null;
+			// with bean-id, bean could be found by both @Resource and @Autowired, or bean could only be found by @Autowired
 			if (AnnotationUtils.getAnnotation(field, Resource.class) != null) {
 				try {
 					fieldBean = applicationContext.getBean(field.getName());
 				} catch (Exception e) {
 				}
 				if (fieldBean==null ) {
-					fieldBean = applicationContext.getBean(field.getType());	// with bean-id, bean could be found by both @Resource and @Autowired
+					fieldBean = applicationContext.getBean(field.getType());
 				}
 			} else if (AnnotationUtils.getAnnotation(field, Autowired.class) != null) {
-				fieldBean = applicationContext.getBean(field.getType());		// without bean-id, bean could only be found by @Autowired
+				fieldBean = applicationContext.getBean(field.getType());		
 			}
 			
 			if (fieldBean!=null) {
