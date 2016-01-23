@@ -42,11 +42,14 @@ public class GlueFactory {
 	}
 	
 	// load class, 
+	public static String generateClassCacheKey(String name){
+		return name+"_class";
+	}
 	public Class<?> loadClass(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
-		String cacheClassKey = name+"_class";
+		String cacheClassKey = generateClassCacheKey(name);
 		Object cacheClass = LocalCache.getInstance().get(cacheClassKey);
 		if (cacheClass != null) {
 			return (Class<?>) cacheClass;
@@ -80,11 +83,14 @@ public class GlueFactory {
 	}
 	
 	// // load instance, singleton
+	public static String generateInstanceCacheKey(String name){
+		return name+"_instance";
+	}
 	public Object loadInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
-		String cacheInstanceKey = name + "_instance";
+		String cacheInstanceKey = generateInstanceCacheKey(name);
 		Object cacheClass = LocalCache.getInstance().get(cacheInstanceKey);
 		if (cacheClass!=null) {
 			return cacheClass;
