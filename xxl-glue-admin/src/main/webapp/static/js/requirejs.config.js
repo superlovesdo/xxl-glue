@@ -21,6 +21,7 @@ require.config({
         'source-code-pro'			:	'../plugins/jquery/jquery.2.1.4.min',	// path支持设置单个文件
         'datatables-jquery'			:	'../plugins/datatables/media/js/jquery.dataTables.min',
         'moment'					:	'../plugins/moment/moment.min',
+        'pace'						:	'../plugins/pace/pace.min',
     },
     waitSeconds : 5,	// TimeOut, 默认7秒
 	urlArgs: "bust=" + (new Date()).getTime()	// 版本号, 防止缓存

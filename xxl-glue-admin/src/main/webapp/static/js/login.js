@@ -1,5 +1,5 @@
 'use strict';	// 开启严格模式以后，一些js糟糕的特性都会被禁用:检查对象中的重复键/未声明变量/重复的参数...
-define(['jquery', 'semantic-comalert', 'jquery.validate', 'semantic', 'semantic-ui-form', 'semantic-ui-transition'], function($, ComAlert) {
+define(['jquery', 'semantic-comalert', 'jquery.validate', 'semantic', 'semantic-ui-form', 'semantic-ui-transition', 'common'], function($, ComAlert) {
     //alert($().jquery);
 	
     $('.ui.form').form({

@@ -1,5 +1,6 @@
 "use strict";
 define(function(require, exports, module) {
+	require("common");
 	var jquery = require("jquery");
 	var ComAlert = require('semantic-comalert');
 	
