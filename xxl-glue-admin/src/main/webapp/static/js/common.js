@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'semantic-comalert'], function($, ComAlert) {
+define(['jquery', 'semantic-comalert', 'pace'], function($, ComAlert, pace) {
 	
 	// 闭包，自由变量
 	$('.logoutBtn').on('click', function(){
@@ -22,6 +22,8 @@ define(['jquery', 'semantic-comalert'], function($, ComAlert) {
 			}
 		);
 	});
+	
+	pace.start();
 	
     return '200';
 });
