@@ -23,7 +23,7 @@ define(['jquery', 'semantic', 'semantic-ui-modal'], function() {
 			$('#ComAlert .description').html(msg);
 			$('#ComAlert').modal({
 				closable  : false,
-				duration : 100,
+				duration : 150,
 				onApprove : function() {
 					if(typeof callback == 'function') {
 						callback();
@@ -50,7 +50,7 @@ define(['jquery', 'semantic', 'semantic-ui-modal'], function() {
 			//console.log(callback_cancel);
 			$('#ComConfirm').modal({
 				closable  : false,
-				duration : 100,
+				duration : 150,
 				onApprove : function(){
 					if(typeof callback_ok == 'function') {
 						callback_ok();
