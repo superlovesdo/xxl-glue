@@ -49,6 +49,7 @@ define(function(require, exports, module) {
 					success : function(data){
 						if (data.code == 200) {
 							ComAlert.alert('提交成功', function(){
+								$(window).unbind('beforeunload');
 								window.location.reload();
 							});
 							// or session.setValue
@@ -64,9 +65,26 @@ define(function(require, exports, module) {
 	// 回溯-线上
 	$(".source").on('click', function(){
 		editor.setValue($('#'+$(this).attr('source')).val());
+		//editor.gotoLine(editor.session.getLength());
+		editor.gotoLine(1);
 	});
 	
 	// Glue source初始化
 	$('.source_online').click();
+	
+	// listener Ctrl + S
+	editor.commands.addCommand({
+	    name: 'Ctrl-S',
+	    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+	    exec: function(editor) {
+	    	$("#save").click();
+	    },
+	    readOnly: false // false if this command should not apply in readOnly mode
+	});
+	
+	// before upload
+	$(window).bind('beforeunload',function(){
+		return 'Glue尚未保存，确定离开Glue编辑器？';
+	});
 	
 });
