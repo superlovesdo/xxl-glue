@@ -1,5 +1,9 @@
 package com.xxl.groovy.example.controller;
 
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xxl.groovy.core.GlueFactory;
 import com.xxl.groovy.core.GlueLoader;
-import com.xxl.groovy.example.service.IDemoHandler;
+import com.xxl.groovy.core.service.GlueHandler;
 
+/**
+ * demo controller
+ * @author xuxueli 2016-1-23 16:58:31
+ */
 @Controller
 public class IndexController {
 	
@@ -42,10 +50,18 @@ public class IndexController {
 	@ResponseBody
 	public String glue(@PathVariable String name) {
 		Object result = null;
-		IDemoHandler handler = (IDemoHandler) glueFactory.loadInstance(name);
-		if (handler!=null) {
-			result = handler.handle(null);
+		
+		try {
+			GlueHandler handler = (GlueHandler) glueFactory.loadInstance(name);
+			if (handler!=null) {
+				result = handler.handle(null);
+			}
+		} catch (Exception e) {
+			Writer writer = new StringWriter();
+	        e.printStackTrace(new PrintWriter(writer));
+	        result = writer.toString();
 		}
+		
 		return MessageFormat.format("code name : {0}<hr>{1}", name, result);
 	}
 	

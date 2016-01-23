@@ -42,7 +42,7 @@ public class GlueFactory {
 	}
 	
 	// load class, 
-	public Class<?> loadClass(String name){
+	public Class<?> loadClass(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
@@ -53,45 +53,34 @@ public class GlueFactory {
 		}
 		String codeSource = glueLoader.load(name);
 		if (codeSource!=null && codeSource.trim().length()>0) {
-			try {
-				Class<?> clazz = groovyClassLoader.parseClass(codeSource);
-				if (clazz!=null) {
-					LocalCache.getInstance().set(cacheClassKey, clazz, cacheTimeout);
-					logger.info(">>>>>>>>>>>> xxl-glue, fresh class, name:{}", name);
-					return clazz;
-				}
-			} catch (Exception e) {
-				logger.info(">>>>>>>>>>>> xxl-glue, parse class error, name:{}", name);
-				logger.info(">>>>>>>>>>>> xxl-glue, parse class error, e:{}", e);
+			Class<?> clazz = groovyClassLoader.parseClass(codeSource);
+			if (clazz!=null) {
+				LocalCache.getInstance().set(cacheClassKey, clazz, cacheTimeout);
+				logger.info(">>>>>>>>>>>> xxl-glue, fresh class, name:{}", name);
+				return clazz;
 			}
 		}
 		return null;
 	}
 	
 	// load new instance, prototype
-	public Object loadNewInstance(String name){
+	public Object loadNewInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
 		Class<?> clazz = loadClass(name);
 		if (clazz!=null) {
-			try {
-				Object instance = clazz.newInstance();
-				if (instance!=null) {
-					this.fillBeanField(instance);
-					return instance;
-				}
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+			Object instance = clazz.newInstance();
+			if (instance!=null) {
+				this.fillBeanField(instance);
+				return instance;
 			}
 		}
 		return null;
 	}
 	
 	// // load instance, singleton
-	public Object loadInstance(String name){
+	public Object loadInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
