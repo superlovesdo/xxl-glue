@@ -26,4 +26,5 @@
 		<module>xxl-glue-core</module>
 		<module>xxl-glue-core-example</module>
 	</modules>
+
 </project>

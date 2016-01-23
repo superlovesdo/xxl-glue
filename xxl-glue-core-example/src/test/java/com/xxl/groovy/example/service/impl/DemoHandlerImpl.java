@@ -2,9 +2,10 @@ package com.xxl.groovy.example.service.impl;
 
 import java.util.Map;
 
-import com.xxl.groovy.example.service.IDemoHandler;
+import com.xxl.groovy.core.service.GlueHandler;
 
-public class DemoHandlerImpl implements IDemoHandler {
+
+public class DemoHandlerImpl implements GlueHandler {
 
 	@Override
 	public Object handle(Map<String, Object> params) {

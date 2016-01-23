@@ -1,8 +1,6 @@
-package com.xxl.service.impl;
+
 
 import java.util.Map;
-
-import com.xxl.service.IGroovyService;
 
 class GroovyServiceImpl implements IGroovyService{
 

@@ -1,7 +1,7 @@
 package com.xxl.groovy.core;
 
 public class GlueFactoryTest {
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws Exception {
 		GlueFactory glueFactory = new GlueFactory();
 		glueFactory.setGlueLoader(new GlueLoader() {
 			@Override

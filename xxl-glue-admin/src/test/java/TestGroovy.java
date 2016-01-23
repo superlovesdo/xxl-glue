@@ -1,5 +1,3 @@
-import com.xxl.service.IGroovyService;
-
 import groovy.lang.GroovyClassLoader;
 
 public class TestGroovy {
@@ -7,9 +5,8 @@ public class TestGroovy {
 	@SuppressWarnings({ "unchecked", "resource" })
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException {
 		
-		String classCode = "package com.xxl.service.impl;"+
+		String classCode = ""+
 				"import java.util.Map; "+
-				"import com.xxl.service.IGroovyService;"+
 				"class GroovyServiceImpl2 implements IGroovyService{"+
 				"	@Override"+
 				"	public Object execute(Map<String, Object> param) {"+

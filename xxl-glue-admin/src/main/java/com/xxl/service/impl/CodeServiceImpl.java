@@ -15,6 +15,7 @@ import com.xxl.core.result.ReturnT;
 import com.xxl.dao.ICodeInfoDao;
 import com.xxl.dao.ICodeLogDao;
 import com.xxl.service.ICodeService;
+import com.xxl.service.IJmsSendService;
 
 @Service
 public class CodeServiceImpl implements ICodeService {
@@ -23,6 +24,8 @@ public class CodeServiceImpl implements ICodeService {
 	private ICodeInfoDao codeInfoDao;
 	@Autowired
 	private ICodeLogDao codeLogDao;
+	@Autowired
+	private IJmsSendService jmsSendService;
 
 	@Override
 	public Map<String, Object> pageList(int offset, int pagesize, String name) {
@@ -39,10 +42,15 @@ public class CodeServiceImpl implements ICodeService {
 
 	@Override
 	public ReturnT<String> delete(int id) {
+		CodeInfo codeInfo = codeInfoDao.loadCode(id);
+		if (codeInfo==null) {
+			return new ReturnT<String>(500, "“删除失败,Glue”不存在"); 
+		}
 		int ret = codeInfoDao.delete(id);
 		if (ret < 1) {
 			return new ReturnT<String>(500, "删除失败");
 		}
+		jmsSendService.glueTopicPub(codeInfo.getName());
 		return ReturnT.SUCCESS;
 	}
 
@@ -65,6 +73,7 @@ public class CodeServiceImpl implements ICodeService {
 		if (ret < 1) {
 			return new ReturnT<String>(500, "新增失败");
 		}
+		jmsSendService.glueTopicPub(codeInfo.getName());
 		return ReturnT.SUCCESS;
 	}
 
@@ -99,7 +108,7 @@ public class CodeServiceImpl implements ICodeService {
 		}
 		// remove log more than 10
 		codeLogDao.removeOldLogs(codeInfo_old.getName());
-		
+		jmsSendService.glueTopicPub(codeInfo_old.getName());
 		return ReturnT.SUCCESS;
 	}
 
