@@ -4,9 +4,10 @@
 	<parent>
 		<groupId>com.xxl</groupId>
 		<artifactId>xxl-glue</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	<artifactId>xxl-glue-core</artifactId>
+	<version>1.0.2</version>
 
 	<dependencies>
 		<!-- slf4j -->
