@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.xxl.groovy.core.cache.LocalCache;
+import com.xxl.groovy.core.service.GlueHandler;
 import com.xxl.groovy.core.support.SpringSupport;
 
 import groovy.lang.GroovyClassLoader;
@@ -67,7 +68,7 @@ public class GlueFactory {
 	}
 	
 	// load new instance, prototype
-	public Object loadNewInstance(String name) throws Exception{
+	public GlueHandler loadNewInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
@@ -75,33 +76,47 @@ public class GlueFactory {
 		if (clazz!=null) {
 			Object instance = clazz.newInstance();
 			if (instance!=null) {
+				if (!(instance instanceof GlueHandler)) {
+					throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, "
+							+ "cannot convert from instance["+ instance.getClass() +"] to GlueHandler");
+				}
+				
 				this.fillBeanField(instance);
-				return instance;
+				return (GlueHandler) instance;
 			}
 		}
-		return null;
+		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, instance is null");
 	}
 	
 	// // load instance, singleton
 	public static String generateInstanceCacheKey(String name){
 		return name+"_instance";
 	}
-	public Object loadInstance(String name) throws Exception{
+	public GlueHandler loadInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
 		String cacheInstanceKey = generateInstanceCacheKey(name);
-		Object cacheClass = LocalCache.getInstance().get(cacheInstanceKey);
-		if (cacheClass!=null) {
-			return cacheClass;
+		Object cacheInstance = LocalCache.getInstance().get(cacheInstanceKey);
+		if (cacheInstance!=null) {
+			if (!(cacheInstance instanceof GlueHandler)) {
+				throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, "
+						+ "cannot convert from cacheClass["+ cacheInstance.getClass() +"] to GlueHandler");
+			}
+			return (GlueHandler) cacheInstance;
 		}
 		Object instance = loadNewInstance(name);
 		if (instance!=null) {
+			if (!(instance instanceof GlueHandler)) {
+				throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, "
+						+ "cannot convert from instance["+ instance.getClass() +"] to GlueHandler");
+			}
+			
 			LocalCache.getInstance().set(cacheInstanceKey, instance, cacheTimeout);
 			logger.info(">>>>>>>>>>>> xxl-glue, fresh instance, name:{}", name);
-			return instance;
+			return (GlueHandler) instance;
 		}
-		return null;
+		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, instance is null");
 	}
 	
 }

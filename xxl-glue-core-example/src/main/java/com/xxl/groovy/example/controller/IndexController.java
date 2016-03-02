@@ -65,4 +65,13 @@ public class IndexController {
 		return MessageFormat.format("code name : {0}<hr>{1}", name, result);
 	}
 	
+	@RequestMapping("/demohandler")
+	@ResponseBody
+	public Object demo() throws Exception {
+		
+		Object result = glueFactory.loadInstance("demohandler").handle(null);
+		
+		return result;
+	}
+	
 }
