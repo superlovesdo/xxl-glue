@@ -20,7 +20,7 @@ public class DemoHandlerCImpl implements GlueHandler {
 	*/
 	
 	/**
-	 * 搜索推荐的商户
+	 * 商户黑名单判断
 	 */
 	@Override
 	public Object handle(Map<String, Object> params) {
