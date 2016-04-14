@@ -9,11 +9,11 @@
            http://www.springframework.org/schema/util 
            http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="glueFactory" class="com.xxl.groovy.core.GlueFactory">
+	<bean id="glueFactory" class="com.xxl.glue.core.GlueFactory">
 		<property name="cacheTimeout" value="300000" />
 		<property name="glueLoader" ref="dbGlueLoader" />
 		<property name="springSupport">
-			<bean class="com.xxl.groovy.core.support.SpringSupport" />
+			<bean class="com.xxl.glue.core.support.GlueSpringSupport" />
 		</property>
 	</bean>
 

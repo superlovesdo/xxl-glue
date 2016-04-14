@@ -36,7 +36,7 @@
 	<!-- AOP配置 -->
 	<aop:config>
 		<!-- 定义一个切入点 -->
-		<aop:pointcut id="txoperation" expression="execution(* com.xxl.service.imp.*.*(..))" />
+		<aop:pointcut id="txoperation" expression="execution(* com.xxl.admin.service.imp.*.*(..))" />
 		<!-- 切入点事务通知 -->
 		<aop:advisor pointcut-ref="txoperation" advice-ref="txAdvice" />
 	</aop:config>

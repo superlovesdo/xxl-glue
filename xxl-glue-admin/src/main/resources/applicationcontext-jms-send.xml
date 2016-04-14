@@ -13,7 +13,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
 				<property name="brokerURL"	value="failover:(tcp://127.0.0.1:61616)" />
 				<property name="transportListener">
-   					<bean class="com.xxl.core.listener.JmsTransportListener"/>
+   					<bean class="com.xxl.admin.core.listener.JmsTransportListener"/>
   				</property>					
 			</bean>
 		</property>

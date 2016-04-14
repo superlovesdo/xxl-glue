@@ -3,7 +3,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="CodeLogMapper">
 	
-	<resultMap id="CodeLog" type="com.xxl.core.model.CodeLog" >
+	<resultMap id="CodeLog" type="com.xxl.admin.core.model.CodeLog" >
 		<result column="id" property="id" />
 	    <result column="name" property="name" />
 	    <result column="source" property="source" />
@@ -21,8 +21,8 @@
 		t.update_time
 	</sql>
 	
-	<insert id="save" parameterType="com.xxl.core.model.CodeLog" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_groovy_code_log (
+	<insert id="save" parameterType="com.xxl.admin.core.model.CodeLog" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO xxl_glue_code_log (
 			name,
 			source,
 			remark,
@@ -42,16 +42,16 @@
 	
 	<select id="loadLogsByName" parameterType="java.lang.String" resultMap="CodeLog" >
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_groovy_code_log AS t
+		FROM xxl_glue_code_log AS t
 		where name = #{name}
 		order by add_time desc
 	</select>
 	
 	<delete id="removeOldLogs" parameterType="java.lang.String" >
-		DELETE FROM xxl_groovy_code_log
+		DELETE FROM xxl_glue_code_log
 		WHERE id NOT in(
 			SELECT id FROM(
-				SELECT id FROM xxl_groovy_code_log
+				SELECT id FROM xxl_glue_code_log
 				WHERE `name` = #{name}
 				ORDER BY update_time desc
 				LIMIT 0, 10

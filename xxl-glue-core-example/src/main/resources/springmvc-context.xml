@@ -19,7 +19,7 @@
 		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 	<mvc:annotation-driven /> 
-	<context:component-scan base-package="com.xxl.groovy.example.controller" />
+	<context:component-scan base-package="com.xxl.glue.example.controller" />
 	
 	<mvc:resources mapping="/favicon.ico" location="/favicon.ico" />
 	<mvc:resources mapping="/static/**" location="/static/" />			<!-- 不拦截static目录下 -->

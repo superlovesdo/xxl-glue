@@ -4,10 +4,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	
-	<display-name>xxl-groovy-admin</display-name>
+	<display-name>xxl-glue-admin</display-name>
 	<context-param>
 	    <param-name>webAppRootKey</param-name>
-	    <param-value>xxl-groovy-admin</param-value>
+	    <param-value>xxl-glue-admin</param-value>
 	</context-param>
 	
 	<context-param>
