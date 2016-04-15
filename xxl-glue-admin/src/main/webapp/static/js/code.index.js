@@ -41,7 +41,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
                          "data": "id",
                          "render": function ( data, type, row ) {
                         	 $('#delCode_' + row.id).on('click', function(){
-                        		 ComAlert.confirm("确定要进行删除记录，该操作不可恢复",
+                        		 ComAlert.confirm("确定要进行删除操作，该操作不可恢复",
                     			     function(){
                     				 	$.ajax({
                     						type : 'POST',
@@ -104,7 +104,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 	// 删除
 	$('#code_list').on('click', '.delCode', function(){
 		var _id = $(this).attr('_id');
-		ComAlert.confirm("确定要进行删除记录，该操作不可恢复",
+		ComAlert.confirm("确定要进行删除操作，该操作不可恢复",
 			function(){
 			 	$.ajax({
 					type : 'POST',
