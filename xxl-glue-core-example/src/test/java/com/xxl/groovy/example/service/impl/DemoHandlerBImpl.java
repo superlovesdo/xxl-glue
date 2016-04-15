@@ -7,7 +7,7 @@ import java.util.Set;
 import com.xxl.glue.core.handler.GlueHandler;
 
 /**
- * 场景B：托管 “静态方法”，
+ * 场景B：托管 “静态方法”
  * 优点：...； + 组件共享；
  * @author xuxueli 2016-4-14 16:07:03
  */
