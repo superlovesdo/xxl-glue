@@ -6,6 +6,7 @@
 	<resultMap id="CodeLog" type="com.xxl.admin.core.model.CodeLog" >
 		<result column="id" property="id" />
 	    <result column="name" property="name" />
+	    <result column="about" property="about" />
 	    <result column="source" property="source" />
 	    <result column="remark" property="remark" />
 	    <result column="add_time" property="addTime" />
@@ -15,6 +16,7 @@
 	<sql id="Base_Column_List">
 		t.id,
 		t.name,
+		t.about,
 		t.source,
 		t.remark,
 		t.add_time,
@@ -24,12 +26,14 @@
 	<insert id="save" parameterType="com.xxl.admin.core.model.CodeLog" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_glue_code_log (
 			name,
+			about,
 			source,
 			remark,
 			add_time,
 			update_time
 		) VALUES (
 			#{name}, 
+			#{about},
 			#{source},
 			#{remark},
 			now(),

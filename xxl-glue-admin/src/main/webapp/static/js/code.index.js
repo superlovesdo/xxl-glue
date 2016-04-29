@@ -157,7 +157,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
                 	},
                 	{
                 		type   : 'length[6]',
-                  		prompt : '“Code名称”长度必须超过6位'
+                  		prompt : '“Code名称”长度应该大于6位'
                 	},
                 	{
                         type   : 'regExp[/^[a-zA-Z][a-zA-Z0-9_]*$/]',
@@ -170,11 +170,11 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
               	rules: [
                 	{
                   		type   : 'empty',
-                  		prompt : '请输入“备注”'
+                  		prompt : '请输入“简介”'
                 	},
                 	{
                   		type   : 'length[6]',
-                  		prompt : '“备注”长度必须超过6位'
+                  		prompt : '“简介”长度应该大于6位'
                 	}
               	]
 			}

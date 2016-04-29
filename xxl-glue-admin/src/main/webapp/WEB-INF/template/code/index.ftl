@@ -38,7 +38,7 @@
 		        <th class="left aligned">id</th>
 		        <th>Glue名称</th>
 		        <th>源码</th>
-		        <th>备注</th>
+		        <th>简介</th>
 		        <th>新增时间</th>
 		        <th>更新时间</th>
 		        <th>操作</th>
@@ -64,8 +64,8 @@
 					</div>
 					<div class="field">
 						<div class="ui labeled input">
-					      <a class="ui label">备注</a>
-					      <input type="text" name="remark" placeholder="请输入...">
+					      <a class="ui label">简介</a>
+					      <input type="text" name="about" placeholder="请输入...">
 					    </div>
 					</div>
 					<div class="actions">

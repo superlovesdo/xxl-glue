@@ -9,6 +9,7 @@ public class CodeInfo {
 	
 	private int id;
 	private String name;
+	private String about;
 	private String source;
 	private String remark;
 	private Date addTime;
@@ -25,6 +26,12 @@ public class CodeInfo {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getAbout() {
+		return about;
+	}
+	public void setAbout(String about) {
+		this.about = about;
 	}
 	public String getSource() {
 		return source;
@@ -51,10 +58,4 @@ public class CodeInfo {
 		this.updateTime = updateTime;
 	}
 	
-	@Override
-	public String toString() {
-		return "CodeInfo [id=" + id + ", name=" + name + ", source=" + source + ", remark=" + remark + ", addTime="
-				+ addTime + ", updateTime=" + updateTime + "]";
-	}
-
 }

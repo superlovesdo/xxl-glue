@@ -42,14 +42,26 @@ public class CodeServiceImpl implements ICodeService {
 
 	@Override
 	public ReturnT<String> delete(int id) {
+		// valid
 		CodeInfo codeInfo = codeInfoDao.loadCode(id);
 		if (codeInfo==null) {
 			return new ReturnT<String>(500, "“删除失败,Glue”不存在"); 
 		}
+		// delete
 		int ret = codeInfoDao.delete(id);
 		if (ret < 1) {
 			return new ReturnT<String>(500, "删除失败");
 		}
+		// save old (backup)
+		try {
+			CodeLog codeLog = new CodeLog();
+			BeanUtils.copyProperties(codeLog, codeInfo);
+			codeLog.setRemark(codeLog.getRemark() + "[backup for 手动删除]");
+			codeLogDao.save(codeLog);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// pub
 		jmsSendService.glueTopicPub(codeInfo.getName());
 		return ReturnT.SUCCESS;
 	}
@@ -60,9 +72,10 @@ public class CodeServiceImpl implements ICodeService {
 		if (StringUtils.isBlank(codeInfo.getName())) {
 			return new ReturnT<String>(500, "“Glue名称”不可为空");
 		}
-		if (StringUtils.isBlank(codeInfo.getRemark())) {
-			return new ReturnT<String>(500, "“Glue备注”不可为空");
+		if (StringUtils.isBlank(codeInfo.getAbout())) {
+			return new ReturnT<String>(500, "“Glue简介”不可为空");
 		}
+		codeInfo.setRemark(codeInfo.getAbout());
 		// check old
 		CodeInfo codeInfo_old = codeInfoDao.loadCodeByName(codeInfo.getName());
 		if (codeInfo_old != null) {
@@ -98,10 +111,11 @@ public class CodeServiceImpl implements ICodeService {
 		if (ret < 1) {
 			return new ReturnT<String>(500, "更新失败");
 		}
-		// save old
+		// save old (backup)
 		try {
 			CodeLog codeLog = new CodeLog();
 			BeanUtils.copyProperties(codeLog, codeInfo_old);
+			codeLog.setRemark(codeLog.getRemark() + "[backup for 编辑更新]");
 			codeLogDao.save(codeLog);
 		} catch (Exception e) {
 			e.printStackTrace();
