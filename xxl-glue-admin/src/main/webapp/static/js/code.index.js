@@ -101,6 +101,13 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 		codeTable.fnDraw();
 	});
 	
+	// 搜索按钮，回车监听
+	$('#codeName').bind('keyup', function(event) {
+		if (event.keyCode == "13") {
+			$('#searchBtn').click();
+		}
+	});
+	
 	// 删除
 	$('#code_list').on('click', '.delCode', function(){
 		var _id = $(this).attr('_id');
