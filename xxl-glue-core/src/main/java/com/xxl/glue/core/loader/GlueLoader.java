@@ -1,4 +1,4 @@
-package com.xxl.glue.core;
+package com.xxl.glue.core.loader;
 
 /**
  * code source loader

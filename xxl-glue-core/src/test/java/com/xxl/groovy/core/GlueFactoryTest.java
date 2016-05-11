@@ -1,7 +1,7 @@
 package com.xxl.groovy.core;
 
 import com.xxl.glue.core.GlueFactory;
-import com.xxl.glue.core.GlueLoader;
+import com.xxl.glue.core.loader.GlueLoader;
 
 public class GlueFactoryTest {
 	public static void main(String[] args) throws Exception {

@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
 
-import com.xxl.glue.core.GlueLoader;
+import com.xxl.glue.core.loader.GlueLoader;
 import com.xxl.glue.example.core.model.CodeInfo;
 import com.xxl.glue.example.dao.ICodeInfoDao;
 

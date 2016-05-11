@@ -1,11 +1,22 @@
 package com.xxl.glue.core;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import com.xxl.glue.core.cache.LocalCache;
 import com.xxl.glue.core.handler.GlueHandler;
-import com.xxl.glue.core.support.GlueSpringSupport;
+import com.xxl.glue.core.loader.GlueLoader;
 
 import groovy.lang.GroovyClassLoader;
 
@@ -13,34 +24,83 @@ import groovy.lang.GroovyClassLoader;
  * glue factory, product class/object by name
  * @author xuxueli 2016-1-2 20:02:27
  */
-public class GlueFactory {
+public class GlueFactory implements ApplicationContextAware {
 	private static Logger logger = LoggerFactory.getLogger(GlueFactory.class);
 	
-	// groovy class loader
+	/**
+	 * groovy class loader
+	 */
 	private GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
 	
-	// glue cache timeout / second
+	/**
+	 * glue cache timeout / second
+	 */
 	private long cacheTimeout = 5000;
 	public void setCacheTimeout(long cacheTimeout) {
 		this.cacheTimeout = cacheTimeout;
 	}
 	
-	// code source loader
+	/**
+	 * code source loader
+	 */
 	private GlueLoader glueLoader;
 	public void setGlueLoader(GlueLoader glueLoader) {
 		this.glueLoader = glueLoader;
 	}
 	
-	// spring support
-	private GlueSpringSupport springSupport;
-	public void setSpringSupport(GlueSpringSupport springSupport) {
-		this.springSupport = springSupport;
+	// ----------------------------- spring support -----------------------------
+	private static ApplicationContext applicationContext;
+	private static GlueFactory glueFactory;
+	
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		GlueFactory.applicationContext = applicationContext;
+		GlueFactory.glueFactory = (GlueFactory) applicationContext.getBean("glueFactory");
 	}
-	public void fillBeanField(Object instance){
-		if (springSupport!=null) {
-			springSupport.fillBeanField(instance);
+	
+	/**
+	 * inject service of spring
+	 * @param instance
+	 */
+	public void injectService(Object instance){
+		if (instance==null) {
+			return;
+		}
+	    
+		Field[] fields = instance.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			if (Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
+			
+			Object fieldBean = null;
+			// with bean-id, bean could be found by both @Resource and @Autowired, or bean could only be found by @Autowired
+			if (AnnotationUtils.getAnnotation(field, Resource.class) != null) {
+				try {
+					fieldBean = applicationContext.getBean(field.getName());
+				} catch (Exception e) {
+				}
+				if (fieldBean==null ) {
+					fieldBean = applicationContext.getBean(field.getType());
+				}
+			} else if (AnnotationUtils.getAnnotation(field, Autowired.class) != null) {
+				fieldBean = applicationContext.getBean(field.getType());		
+			}
+			
+			if (fieldBean!=null) {
+				field.setAccessible(true);
+				try {
+					field.set(instance, fieldBean);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
+	
+	// ----------------------------- load instance -----------------------------
 	
 	// load class, 
 	public static String generateClassCacheKey(String name){
@@ -81,7 +141,7 @@ public class GlueFactory {
 							+ "cannot convert from instance["+ instance.getClass() +"] to GlueHandler");
 				}
 				
-				this.fillBeanField(instance);
+				this.injectService(instance);
 				return (GlueHandler) instance;
 			}
 		}
@@ -117,6 +177,11 @@ public class GlueFactory {
 			return (GlueHandler) instance;
 		}
 		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, instance is null");
+	}
+	
+	// ----------------------------- util -----------------------------
+	public static Object glue(String name, Map<String, Object> params) throws Exception{
+		return GlueFactory.glueFactory.loadInstance(name).handle(params);
 	}
 	
 }

@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xxl.glue.core.GlueFactory;
-import com.xxl.glue.core.GlueLoader;
-import com.xxl.glue.core.handler.GlueHandler;
+import com.xxl.glue.core.loader.GlueLoader;
 
 /**
  * demo controller
@@ -26,10 +25,9 @@ import com.xxl.glue.core.handler.GlueHandler;
 @Controller
 public class IndexController {
 	
+	// ---------------------- GLUE源码加载器 测试 -------------------
 	@Resource
 	private GlueLoader dbGlueLoader;
-	@Resource
-	private GlueFactory glueFactory;
 
 	@RequestMapping
 	@ResponseBody
@@ -46,16 +44,15 @@ public class IndexController {
 		return source;
 	}
 	
+	// ---------------------- GLUE 测试 -------------------
+	
 	@RequestMapping("/glue/{name}")
 	@ResponseBody
 	public String glue(@PathVariable String name) {
 		Object result = null;
 		
 		try {
-			GlueHandler handler = (GlueHandler) glueFactory.loadInstance(name);
-			if (handler!=null) {
-				result = handler.handle(null);
-			}
+			result = GlueFactory.glue(name, null);
 		} catch (Exception e) {
 			Writer writer = new StringWriter();
 	        e.printStackTrace(new PrintWriter(writer));
@@ -63,15 +60,6 @@ public class IndexController {
 		}
 		
 		return MessageFormat.format("code name : {0}<hr><pre>{1}</pre>", name, result);
-	}
-	
-	@RequestMapping("/demohandler")
-	@ResponseBody
-	public Object demo() throws Exception {
-		
-		Object result = glueFactory.loadInstance("demohandler").handle(null);
-		
-		return result;
 	}
 	
 }
