@@ -23,6 +23,6 @@ require.config({
         'moment'					:	'../plugins/moment/moment.min',
         'pace'						:	'../plugins/pace/pace.min',
     },
-    waitSeconds : 5,	// TimeOut, 默认7秒
+    waitSeconds : 0,	// 等待超时, 默认7秒，0时表示放弃超时
 	urlArgs: "bust=" + (new Date()).getTime()	// 版本号, 防止缓存
 });
