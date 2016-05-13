@@ -7,6 +7,10 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-glue
 
 技术交流群(仅作技术交流)：367260654
 
+![image](http://images2015.cnblogs.com/blog/554415/201605/554415-20160513183306234-1939652116.png)
+
+技术的发展离不开你的支持，请作者喝杯咖啡吧！
+
 # 简介
 	推送更行GLUE（抽象且离散的逻辑单元），扩展JVM的动态语言支持；
 
