@@ -2,8 +2,7 @@ require.config({
 	//baseUrl: base_url + 'static/plugins/ace/',
 	paths : {
 		"ace" : base_url + 'static/plugins/ace/',
-		"source-code-pro" : base_url
-				+ 'static/plugins/ace-plugin/source-code-pro'
+		"source-code-pro" : base_url + 'static/plugins/ace-plugin/source-code-pro'
 	},
 	waitSeconds : 30,
 	urlArgs: "bust=" + (new Date()).getTime()

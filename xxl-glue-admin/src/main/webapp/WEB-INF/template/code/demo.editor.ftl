@@ -1,3 +1,4 @@
+<#import "/common/common.macro.ftl" as netCommon>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -172,8 +173,7 @@
 
 <div id="editor-container"></div>
 
-<script>var base_url = '${request.contextPath}/';</script>
-<script src="${request.contextPath}/static/plugins/requirejs/requirejs.2.1.22.min.js" data-main="${request.contextPath}/static/js/ace-demo/demo.js" ></script>
+<@netCommon.commonScript />
 
 </body>
 </html>

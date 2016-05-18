@@ -22,6 +22,22 @@
   	</style>
 </#macro>
 
+<#macro commonScript>
+<#-- 
+1、避免阻塞，提高了 js 的加载性能；
+2、通过编程使用 require 方法加载，而不是<script>硬写，更加灵活。
+主数据:加载requirejs脚本的script标签加入了data-main属性，这个属性指定的js将在加载完reuqire.js后处理，我们把require.config的配置加入到data-main后，就可以使每一个页面都使用这个配置
+data-main还有一个重要的功能，当script标签指定data-main属性时，require会默认的将data-main指定的js为根路径
+require参数而为callback函数中发现有$参数，这个就是依赖的jquery模块的输出变量，如果你依赖多个模块，可以依次写入多个参数来使用
+通过require加载的模块一般都需要符合AMD规范即使用define来申明模块，但是部分时候需要加载非AMD规范的js，这时候就需要用到另一个功能：shim
+shim解释起来也比较难理解，shim直接翻译为"垫"，其实也是有这层意思的，目前我主要用在两个地方
+1. 插件形式的非AMD模块，我们经常会用到jquery插件，而且这些插件基本都不符合AMD规范，比如jquery.form插件，这时候就需要将form插件"垫"到jquery中：
+-->
+<script src="${request.contextPath}/static/plugins/requirejs/requirejs.2.1.22.min.js" data-main="${request.contextPath}/static/js/requirejs.config" ></script>
+<script src="${request.contextPath}/static/js/requirejs.config.js" ></script> <!-- 必须手动引用该main入口函数，否则10%几率应为引用地址错误导致部分引用404，费解 -->
+<script> var base_url = '${request.contextPath}/'; </script>
+</#macro>
+
 <#macro commonHeader>
 <div class="ui fixed inverted menu">
 	<div class="ui container">
@@ -55,6 +71,7 @@
 </#macro>
 
 <#macro commonFooter >
+<#--
 <div class="ui inverted vertical footer segment">
 	<div class="ui container">
 		<div class="ui stackable inverted divided equal height stackable grid">
@@ -82,4 +99,5 @@
 		</div>
 	</div>
 </div>
+-->
 </#macro>

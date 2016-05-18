@@ -7,7 +7,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 		"processing" : true, 
 	    "serverSide": true,
 		"ajax": {
-	        url: base_url + "/code/pageList" ,
+	        url: base_url + "code/pageList" ,
 	        data : function ( d ) {
                 d.name = $('#codeName').val()
             }
@@ -45,7 +45,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
                     			     function(){
                     				 	$.ajax({
                     						type : 'POST',
-                    						url : base_url + '/code/delCode',
+                    						url : base_url + 'code/delCode',
                     						data : {
                     							id : row.id
                     						},
@@ -115,7 +115,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 			function(){
 			 	$.ajax({
 					type : 'POST',
-					url : base_url + '/code/delCode',
+					url : base_url + 'code/delCode',
 					data : {
 						id : _id
 					},
