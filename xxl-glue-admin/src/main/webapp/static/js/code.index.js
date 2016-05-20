@@ -19,7 +19,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 	                { "data": 'id', "bSortable": false, "visible" : true},
 	                { "data": 'name', "bSortable": false},
 	                { "data": 'source', "bSortable": false, "visible" : false},
-	                { "data": 'remark', "bSortable": false},
+	                { "data": 'about', "bSortable": false},
 	                { 
 	                	"data": 'addTime', 
 	                	"bSortable": false, 

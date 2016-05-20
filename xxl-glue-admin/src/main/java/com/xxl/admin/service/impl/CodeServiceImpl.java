@@ -75,7 +75,6 @@ public class CodeServiceImpl implements ICodeService {
 		if (StringUtils.isBlank(codeInfo.getAbout())) {
 			return new ReturnT<String>(500, "“Glue简介”不可为空");
 		}
-		codeInfo.setRemark(codeInfo.getAbout());
 		// check old
 		CodeInfo codeInfo_old = codeInfoDao.loadCodeByName(codeInfo.getName());
 		if (codeInfo_old != null) {

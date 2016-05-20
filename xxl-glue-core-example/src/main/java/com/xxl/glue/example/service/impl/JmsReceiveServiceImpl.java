@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.xxl.glue.core.GlueFactory;
-import com.xxl.glue.core.cache.LocalCache;
 import com.xxl.glue.example.service.IJmsReceiveService;
 
 /**
@@ -20,8 +19,7 @@ public class JmsReceiveServiceImpl implements IJmsReceiveService {
 	public void glueTopicSub(String message) {
 		logger.info("jms glueTopicSub:{}", message);
 		if (message!=null) {
-			LocalCache.getInstance().remove(GlueFactory.generateClassCacheKey(message));
-			LocalCache.getInstance().remove(GlueFactory.generateInstanceCacheKey(message));
+			GlueFactory.freshGlue(message);
 		}
 	}
 

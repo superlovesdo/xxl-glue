@@ -1,6 +1,7 @@
 package com.xxl.glue.core.cache;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * local interface
@@ -32,7 +33,11 @@ public class LocalCache implements ICache{
 	
 	@Override
 	public boolean set(String key, Object value, long timeout) {
-		cacheMap.put(makeTimKey(key), System.currentTimeMillis() + timeout);
+		if (timeout == -1) {
+			cacheMap.put(makeTimKey(key), -1);	// 永久存储
+		} else {
+			cacheMap.put(makeTimKey(key), System.currentTimeMillis() + timeout);
+		}
 		cacheMap.put(makeDataKey(key), value);
 		return true;
 	}
@@ -40,8 +45,17 @@ public class LocalCache implements ICache{
 	@Override
 	public Object get(String key) {
 		Object tim = cacheMap.get(makeTimKey(key));
-		if (tim != null && System.currentTimeMillis() < Long.parseLong(tim.toString())) {
-			return cacheMap.get(makeDataKey(key));
+		if (tim != null) {
+			long timeoutTim = Long.parseLong(tim.toString());
+			if (timeoutTim == -1) {
+				return cacheMap.get(makeDataKey(key));	// 永久存储
+			} else {
+				if (System.currentTimeMillis() < timeoutTim) {
+					return cacheMap.get(makeDataKey(key));
+				} else {
+					this.remove(key);
+				}
+			}
 		}
 		return null;
 	}
@@ -61,6 +75,15 @@ public class LocalCache implements ICache{
 		System.out.println(LocalCache.getInstance().get(key));
 		
 		LocalCache.getInstance().set(key, "v2");
+		System.out.println(LocalCache.getInstance().get(key));
+		
+		//LocalCache.getInstance().set(key, "v3", 1);
+		LocalCache.getInstance().set(key, "v3", -1);
+		try {
+			TimeUnit.SECONDS.sleep(3);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		System.out.println(LocalCache.getInstance().get(key));
 		
 		LocalCache.getInstance().remove(key);

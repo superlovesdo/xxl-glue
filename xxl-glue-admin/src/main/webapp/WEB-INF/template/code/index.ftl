@@ -74,6 +74,33 @@
 				    </div>
 		      	</div>
 		      	<div class="ui error message"></div>
+		      	<input type="text" name="remark" value="Demo代码初始化" style="display:none;" >
+<textarea name="source" style="display:none;" >
+package com.xxl.groovy.example.service.impl;
+
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.xxl.glue.core.handler.GlueHandler;
+
+/**
+ * Demo GlueHandler
+ * 
+ * @author xuxueli 2016-4-14 15:36:37
+ */
+public class DemoGlueHandler implements GlueHandler {
+	private static Logger Logger = LoggerFactory.getLogger(DemoGlueHandler.class);
+
+	@Override
+	public Object handle(Map<String, Object> params) {
+		Logger.warn("DemoGlueHandler run success.");
+		return new Object();
+	}
+
+}
+</textarea>
 		    </form>
 	  	</div>
 	</div>

@@ -1,6 +1,7 @@
 package com.xxl.groovy.core;
 
 import com.xxl.glue.core.GlueFactory;
+import com.xxl.glue.core.handler.GlueHandler;
 import com.xxl.glue.core.loader.GlueLoader;
 
 public class GlueFactoryTest {
@@ -10,9 +11,10 @@ public class GlueFactoryTest {
 			@Override
 			public String load(String name) {
 				String classCode = "package com.xxl.groovy.core;"+
-					"public class DemoImpl implements IDemo {"+
-						"public int add(int a, int b) {"+
-							"return a + b;"+
+					"import com.xxl.glue.core.handler.GlueHandler;" +
+					"public class DemoImpl implements GlueHandler {"+
+						"public Object handle(Map<String, Object> params) {"+
+							"return 999;"+
 						"}"+
 					"}"+
 					";";
@@ -20,12 +22,9 @@ public class GlueFactoryTest {
 			}
 		});
 		
-		@SuppressWarnings("unchecked")
-		Class<IDemo> clazz = (Class<IDemo>) glueFactory.loadClass("ssssss");
-		
-		IDemo service = clazz.newInstance();
+		GlueHandler service = (GlueHandler) glueFactory.loadNewInstance("ssss");
 		System.out.println(service);
-		System.out.println(service.add(1, 1));
+		System.out.println(service.handle(null));
 	}
 }
 

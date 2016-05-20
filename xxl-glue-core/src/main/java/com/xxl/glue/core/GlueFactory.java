@@ -3,6 +3,8 @@ package com.xxl.glue.core;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
@@ -102,53 +104,31 @@ public class GlueFactory implements ApplicationContextAware {
 	
 	// ----------------------------- load instance -----------------------------
 	
-	// load class, 
-	public static String generateClassCacheKey(String name){
-		return name+"_class";
-	}
-	public Class<?> loadClass(String name) throws Exception{
-		if (name==null || name.trim().length()==0) {
-			return null;
-		}
-		String cacheClassKey = generateClassCacheKey(name);
-		Object cacheClass = LocalCache.getInstance().get(cacheClassKey);
-		if (cacheClass != null) {
-			return (Class<?>) cacheClass;
-		}
-		String codeSource = glueLoader.load(name);
-		if (codeSource!=null && codeSource.trim().length()>0) {
-			Class<?> clazz = groovyClassLoader.parseClass(codeSource);
-			if (clazz!=null) {
-				LocalCache.getInstance().set(cacheClassKey, clazz, cacheTimeout);
-				logger.info(">>>>>>>>>>>> xxl-glue, fresh class, name:{}", name);
-				return clazz;
-			}
-		}
-		return null;
-	}
-	
 	// load new instance, prototype
 	public GlueHandler loadNewInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
-		Class<?> clazz = loadClass(name);
-		if (clazz!=null) {
-			Object instance = clazz.newInstance();
-			if (instance!=null) {
-				if (!(instance instanceof GlueHandler)) {
-					throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, "
-							+ "cannot convert from instance["+ instance.getClass() +"] to GlueHandler");
+		String codeSource = glueLoader.load(name);
+		if (codeSource!=null && codeSource.trim().length()>0) {
+			Class<?> clazz = groovyClassLoader.parseClass(codeSource);
+			if (clazz!=null) {
+				Object instance = clazz.newInstance();
+				if (instance!=null) {
+					if (instance instanceof GlueHandler) {
+						this.injectService(instance);
+						return (GlueHandler) instance;
+					} else {
+						throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, "
+								+ "cannot convert from instance["+ instance.getClass() +"] to GlueHandler");
+					}
 				}
-				
-				this.injectService(instance);
-				return (GlueHandler) instance;
 			}
 		}
 		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, instance is null");
 	}
 	
-	// // load instance, singleton
+	// load instance, singleton
 	public static String generateInstanceCacheKey(String name){
 		return name+"_instance";
 	}
@@ -159,19 +139,10 @@ public class GlueFactory implements ApplicationContextAware {
 		String cacheInstanceKey = generateInstanceCacheKey(name);
 		Object cacheInstance = LocalCache.getInstance().get(cacheInstanceKey);
 		if (cacheInstance!=null) {
-			if (!(cacheInstance instanceof GlueHandler)) {
-				throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, "
-						+ "cannot convert from cacheClass["+ cacheInstance.getClass() +"] to GlueHandler");
-			}
 			return (GlueHandler) cacheInstance;
 		}
 		Object instance = loadNewInstance(name);
 		if (instance!=null) {
-			if (!(instance instanceof GlueHandler)) {
-				throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, "
-						+ "cannot convert from instance["+ instance.getClass() +"] to GlueHandler");
-			}
-			
 			LocalCache.getInstance().set(cacheInstanceKey, instance, cacheTimeout);
 			logger.info(">>>>>>>>>>>> xxl-glue, fresh instance, name:{}", name);
 			return (GlueHandler) instance;
@@ -179,9 +150,35 @@ public class GlueFactory implements ApplicationContextAware {
 		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, instance is null");
 	}
 	
+	// remove old instance 	(异步刷新缓存，避免缓存雪崩)
+	private ExecutorService consumer_threads = Executors.newCachedThreadPool();
+	public void freshGlueInstance(final String name){
+		if (name==null || name.trim().length()==0) {
+			return;
+		}
+		final String cacheInstanceKey = generateInstanceCacheKey(name);
+		consumer_threads.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Object instance = loadNewInstance(name);
+					if (instance!=null) {
+						LocalCache.getInstance().set(cacheInstanceKey, instance, cacheTimeout);
+						logger.info(">>>>>>>>>>>> xxl-glue, async fresh instance, name:{}", name);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();	// 删除时，广播loadNewInstance找不到会报错，后期优化
+				}
+			}
+		});
+	}
+	
 	// ----------------------------- util -----------------------------
 	public static Object glue(String name, Map<String, Object> params) throws Exception{
 		return GlueFactory.glueFactory.loadInstance(name).handle(params);
+	}
+	public static void freshGlue(String name){
+		GlueFactory.glueFactory.freshGlueInstance(name);
 	}
 	
 }
