@@ -31,4 +31,9 @@ public class CodeLogDaoImpl implements ICodeLogDao {
 		return sqlSessionTemplate.delete("CodeLogMapper.removeOldLogs", name);
 	}
 
+	@Override
+	public int delete(String name) {
+		return sqlSessionTemplate.delete("CodeLogMapper.delete", name);
+	}
+
 }

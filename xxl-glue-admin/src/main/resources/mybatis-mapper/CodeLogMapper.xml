@@ -63,4 +63,9 @@
 		)
 	</delete>
 	
+	<delete id="delete" parameterType="java.lang.String" >
+		DELETE FROM xxl_glue_code_log
+		WHERE `name` = #{name}
+	</delete>
+	
 </mapper>

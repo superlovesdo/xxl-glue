@@ -31,3 +31,12 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-glue
 	分布式缓存：Redis、Memcached（得益于“Local缓存 + 广播”实现方式，可大大减少IO开销）
 	分布式配置：Disconf（得益于Groovy的动态语言特性，可支持复杂类型数据接口，即使代码块）
 	
+# 待优化
+	1、更新/新增/删除，推送：remove + 懒加载》预加载； done【done】
+	2、启动预热加载，根据APPName；
+	3、新建代码时，填充DemoHanr代码；【done】
+	5、主推功能：配置，规则Util；
+	6、test页面，unit
+	7、local模式/远程模式切换，Local开发，支持同步线上；
+	8、环境切换，beta/线上；
+	

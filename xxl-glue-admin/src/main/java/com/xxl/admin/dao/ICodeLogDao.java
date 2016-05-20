@@ -11,5 +11,7 @@ public interface ICodeLogDao {
 	public List<CodeLog> loadLogsByName(String name);
 
 	public int removeOldLogs(String name);
+
+	public int delete(String name);
 	
 }

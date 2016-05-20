@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.xxl.glue.core.GlueFactory;
+import com.xxl.glue.core.broadcast.GlueMessage;
+import com.xxl.glue.example.core.util.JacksonUtil;
 import com.xxl.glue.example.service.IJmsReceiveService;
 
 /**
@@ -17,9 +19,10 @@ public class JmsReceiveServiceImpl implements IJmsReceiveService {
 
 	@Override
 	public void glueTopicSub(String message) {
-		logger.info("jms glueTopicSub:{}", message);
+		logger.info("jms glueTopicSub(0-update, 1-delete, 2-add):{}", message);
 		if (message!=null) {
-			GlueFactory.freshGlue(message);
+			GlueMessage glueMessage = JacksonUtil.readValue(message, GlueMessage.class);
+			GlueFactory.freshGlue(glueMessage);
 		}
 	}
 

@@ -10,7 +10,8 @@
            http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="glueFactory" class="com.xxl.glue.core.GlueFactory">
-		<property name="cacheTimeout" value="300000" />
+		<property name="cacheTimeout" value="-1" />
+		<property name="appName" value="xxl-glue-core-exapmle" />
 		<property name="glueLoader" ref="dbGlueLoader" />
 	</bean>
 

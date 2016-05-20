@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import com.xxl.glue.core.broadcast.GlueMessage;
 import com.xxl.glue.core.cache.LocalCache;
 import com.xxl.glue.core.handler.GlueHandler;
 import com.xxl.glue.core.loader.GlueLoader;
@@ -40,6 +41,14 @@ public class GlueFactory implements ApplicationContextAware {
 	private long cacheTimeout = 5000;
 	public void setCacheTimeout(long cacheTimeout) {
 		this.cacheTimeout = cacheTimeout;
+	}
+	
+	/**
+	 * appName, used to warn-up glue data
+	 */
+	private String appName;
+	public void setAppName(String appName) {
+		this.appName = appName;
 	}
 	
 	/**
@@ -167,7 +176,7 @@ public class GlueFactory implements ApplicationContextAware {
 						logger.info(">>>>>>>>>>>> xxl-glue, async fresh instance, name:{}", name);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();	// 删除时，广播loadNewInstance找不到会报错，后期优化
+					e.printStackTrace();
 				}
 			}
 		});
@@ -177,8 +186,28 @@ public class GlueFactory implements ApplicationContextAware {
 	public static Object glue(String name, Map<String, Object> params) throws Exception{
 		return GlueFactory.glueFactory.loadInstance(name).handle(params);
 	}
-	public static void freshGlue(String name){
-		GlueFactory.glueFactory.freshGlueInstance(name);
+	public static void freshGlue(GlueMessage glueMessage){
+		// check warn-up
+		boolean isMessageApply = true;
+		if (glueMessage.getAppnames()!=null && glueMessage.getAppnames().size()>0) {
+			if (glueMessage.getAppnames().contains(GlueFactory.glueFactory.appName)) {
+				isMessageApply = true;
+			} else {
+				isMessageApply = false;
+			}
+		} else {
+			isMessageApply = true;
+		}
+		
+		if (isMessageApply) {
+			// 0-update, 1-delete, 2-add
+			if (glueMessage.getType() == 0 || glueMessage.getType() == 2) {
+				GlueFactory.glueFactory.freshGlueInstance(glueMessage.getName());
+			} else if (glueMessage.getType() == 1) {
+				String cacheInstanceKey = generateInstanceCacheKey(glueMessage.getName());
+				LocalCache.getInstance().remove(cacheInstanceKey);
+			}
+		}
 	}
 	
 }

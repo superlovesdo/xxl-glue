@@ -16,6 +16,7 @@ import com.xxl.admin.dao.ICodeInfoDao;
 import com.xxl.admin.dao.ICodeLogDao;
 import com.xxl.admin.service.ICodeService;
 import com.xxl.admin.service.IJmsSendService;
+import com.xxl.glue.core.broadcast.GlueMessage;
 
 @Service
 public class CodeServiceImpl implements ICodeService {
@@ -52,17 +53,22 @@ public class CodeServiceImpl implements ICodeService {
 		if (ret < 1) {
 			return new ReturnT<String>(500, "删除失败");
 		}
+		codeLogDao.delete(codeInfo.getName());
 		// save old (backup)
-		try {
+		/*try {
 			CodeLog codeLog = new CodeLog();
 			BeanUtils.copyProperties(codeLog, codeInfo);
 			codeLog.setRemark(codeLog.getRemark() + "[backup for 手动删除]");
 			codeLogDao.save(codeLog);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		// pub
-		jmsSendService.glueTopicPub(codeInfo.getName());
+		GlueMessage message = new GlueMessage();
+		message.setName(codeInfo.getName());
+		message.setType(1);
+		message.setAppnames(null);
+		jmsSendService.glueTopicPub(message);
 		return ReturnT.SUCCESS;
 	}
 
@@ -85,7 +91,12 @@ public class CodeServiceImpl implements ICodeService {
 		if (ret < 1) {
 			return new ReturnT<String>(500, "新增失败");
 		}
-		jmsSendService.glueTopicPub(codeInfo.getName());
+		// pub
+		GlueMessage message = new GlueMessage();
+		message.setName(codeInfo.getName());
+		message.setType(2);
+		message.setAppnames(null);
+		jmsSendService.glueTopicPub(message);
 		return ReturnT.SUCCESS;
 	}
 
@@ -121,7 +132,12 @@ public class CodeServiceImpl implements ICodeService {
 		}
 		// remove log more than 10
 		codeLogDao.removeOldLogs(codeInfo_old.getName());
-		jmsSendService.glueTopicPub(codeInfo_old.getName());
+		// pub
+		GlueMessage message = new GlueMessage();
+		message.setName(codeInfo_old.getName());
+		message.setType(0);
+		message.setAppnames(null);
+		jmsSendService.glueTopicPub(message);
 		return ReturnT.SUCCESS;
 	}
 

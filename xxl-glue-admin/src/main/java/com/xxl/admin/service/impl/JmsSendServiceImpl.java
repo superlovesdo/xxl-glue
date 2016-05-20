@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
+import com.xxl.admin.core.util.JacksonUtil;
 import com.xxl.admin.service.IJmsSendService;
+import com.xxl.glue.core.broadcast.GlueMessage;
 
 /**
  * JMS.SEND
@@ -28,9 +30,10 @@ public class JmsSendServiceImpl implements IJmsSendService {
 	 * @see com.xxl.service.IJmsSendService#sendString(java.lang.String)
 	 */
 	@Override
-	public void glueTopicPub(String message) {
-		logger.info("jms simpleTopicPub:{}", message);
-		glueTopicPubJmsTemplate.convertAndSend(message);
+	public void glueTopicPub(GlueMessage message) {
+		String json = JacksonUtil.writeValueAsString(message);
+		logger.info("jms simpleTopicPub:{}", json);
+		glueTopicPubJmsTemplate.convertAndSend(json);
 	}
 
 	/*
