@@ -32,9 +32,14 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-glue
 	分布式配置：Disconf（得益于Groovy的动态语言特性，可支持复杂类型数据接口，即使代码块）
 	
 # 待优化
-	1、更新/新增/删除，推送：remove + 懒加载》预加载； done【done】
-	2、启动预热加载，根据APPName；
-	3、新建代码时，填充DemoHanr代码；【done】
+	1、新增字段[applyapps]：预热时使用，表示使用的AppName范围，null表示全部适用；
+	2、启动预热加载，根据AppName匹配；
+	3、缓存Timeout超时，覆盖更新，取代懒加载；（懒加载》并发》缓存雪崩，导致溢出-启动-溢出，其实系统最稳定的时候是已经运行一段时间之后，jvm进行垃圾回收，对内存资源进行整合分配）
+	2、广播机制重构：
+		删除：删除时触发，根据applyapps使用范围，广播remove；
+		新增：手动触发，根据applyapps使用范围，广播预热加载；
+		更新：手动触发，根据applyapps使用范围，广播覆盖更新；
+	4、新建代码时，填充DemoHanr代码；【done】
 	5、主推功能：配置，规则Util；
 	6、test页面，unit
 	7、local模式/远程模式切换，Local开发，支持同步线上；
