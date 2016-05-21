@@ -21,4 +21,6 @@ public interface ICodeService {
 
 	public List<CodeLog> loadLogs(String name);
 
+	public ReturnT<String> clearCache(int id, String appNames);
+
 }

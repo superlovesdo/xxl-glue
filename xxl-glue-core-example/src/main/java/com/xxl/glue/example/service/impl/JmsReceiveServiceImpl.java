@@ -19,10 +19,10 @@ public class JmsReceiveServiceImpl implements IJmsReceiveService {
 
 	@Override
 	public void glueTopicSub(String message) {
-		logger.info("jms glueTopicSub(0-update, 1-delete, 2-add):{}", message);
+		logger.info("jms glueTopicSub:{}", message);
 		if (message!=null) {
 			GlueMessage glueMessage = JacksonUtil.readValue(message, GlueMessage.class);
-			GlueFactory.freshGlue(glueMessage);
+			GlueFactory.clearCache(glueMessage);
 		}
 	}
 

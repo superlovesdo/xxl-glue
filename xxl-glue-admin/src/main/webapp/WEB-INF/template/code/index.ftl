@@ -104,6 +104,30 @@ public class DemoGlueHandler implements GlueHandler {
 		    </form>
 	  	</div>
 	</div>
+	
+	<!-- code：同步 -->
+	<div class="ui modal" id="clearCacheModal" >
+	  	<i class="close icon"></i>
+	  	<div class="header">清除GLUE缓存</div>
+	  	<div class="content">
+	    	<form class="ui large form">
+		      	<div class="ui stacked segment2">
+					<div class="field">
+						<div class="ui labeled input">
+					      <a class="ui label">Witch App：</a>
+					      <input type="text" name="appNames" placeholder="请输入待清除GLUE缓存的AppName，如多个则用逗号分隔，为空则全站清除">
+					    </div>
+					</div>
+					<input type="hidden" name="id" >
+					<div class="actions">
+						<div class="ui button labeled icon green submit">确定<i class="checkmark icon"></i></div>
+						<div class="ui button negative">取消</div>
+				    </div>
+		      	</div>
+		      	<div class="ui error message"></div>
+		    </form>
+	  	</div>
+	</div>
 
 <@netCommon.commonScript />
 <script>

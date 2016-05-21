@@ -3,8 +3,11 @@ package com.xxl.glue.core;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -17,7 +20,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.xxl.glue.core.broadcast.GlueMessage;
-import com.xxl.glue.core.cache.LocalCache;
+import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
 import com.xxl.glue.core.handler.GlueHandler;
 import com.xxl.glue.core.loader.GlueLoader;
 
@@ -41,6 +44,9 @@ public class GlueFactory implements ApplicationContextAware {
 	private long cacheTimeout = 5000;
 	public void setCacheTimeout(long cacheTimeout) {
 		this.cacheTimeout = cacheTimeout;
+		if (cacheTimeout<-1) {
+			cacheTimeout = -1;	// never cache timeout, as -1, until receive message
+		}
 	}
 	
 	/**
@@ -49,6 +55,9 @@ public class GlueFactory implements ApplicationContextAware {
 	private String appName;
 	public void setAppName(String appName) {
 		this.appName = appName;
+		if (appName==null || appName.trim().length()==0) {
+			this.appName = "default";
+		}
 	}
 	
 	/**
@@ -126,6 +135,7 @@ public class GlueFactory implements ApplicationContextAware {
 				if (instance!=null) {
 					if (instance instanceof GlueHandler) {
 						this.injectService(instance);
+						logger.info(">>>>>>>>>>>> xxl-glue, loadNewInstance success, name:{}", name);
 						return (GlueHandler) instance;
 					} else {
 						throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, "
@@ -138,45 +148,64 @@ public class GlueFactory implements ApplicationContextAware {
 	}
 	
 	// load instance, singleton
-	public static String generateInstanceCacheKey(String name){
-		return name+"_instance";
-	}
+	private static final ConcurrentHashMap<String, GlueHandler> glueInstanceMap = new ConcurrentHashMap<String, GlueHandler>();	// cache instance
+	private static final ConcurrentHashMap<String, Long> glueCacheMap = new ConcurrentHashMap<String, Long>();					// 
 	public GlueHandler loadInstance(String name) throws Exception{
 		if (name==null || name.trim().length()==0) {
 			return null;
 		}
-		String cacheInstanceKey = generateInstanceCacheKey(name);
-		Object cacheInstance = LocalCache.getInstance().get(cacheInstanceKey);
-		if (cacheInstance!=null) {
-			return (GlueHandler) cacheInstance;
+		GlueHandler instance = glueInstanceMap.get(name);
+		if (instance == null) {
+			instance = loadNewInstance(name);
+			if (instance == null) {
+				throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, instance is null");
+			}
+			glueInstanceMap.put(name, instance);
+			glueCacheMap.put(name, cacheTimeout==-1?-1:(System.currentTimeMillis() + cacheTimeout));
+			logger.info(">>>>>>>>>>>> xxl-glue, loadInstance success, name:{}", name);
+		} else {
+			Long instanceTim = glueCacheMap.get(name);
+			boolean ifValid = true;
+			if (instanceTim == null) {
+				ifValid = false;
+			} else {
+				if (instanceTim == -1) {
+					ifValid = true;	
+				} else if (System.currentTimeMillis() > instanceTim) {
+					ifValid = false;
+				}
+			}
+			if (!ifValid) {
+				freshCacheQuene.add(name);
+			}
 		}
-		Object instance = loadNewInstance(name);
-		if (instance!=null) {
-			LocalCache.getInstance().set(cacheInstanceKey, instance, cacheTimeout);
-			logger.info(">>>>>>>>>>>> xxl-glue, fresh instance, name:{}", name);
-			return (GlueHandler) instance;
-		}
-		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadInstance error, instance is null");
+		return instance;
 	}
 	
-	// remove old instance 	(异步刷新缓存，避免缓存雪崩)
-	private ExecutorService consumer_threads = Executors.newCachedThreadPool();
-	public void freshGlueInstance(final String name){
-		if (name==null || name.trim().length()==0) {
-			return;
-		}
-		final String cacheInstanceKey = generateInstanceCacheKey(name);
-		consumer_threads.execute(new Runnable() {
+	// async clear cache (异步刷新缓存，避免缓存雪崩)
+	private static LinkedBlockingQueue<String> freshCacheQuene = new LinkedBlockingQueue<String>();
+	private static ExecutorService freshCacheWorder = Executors.newCachedThreadPool();
+	static{
+		freshCacheWorder.execute(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					Object instance = loadNewInstance(name);
-					if (instance!=null) {
-						LocalCache.getInstance().set(cacheInstanceKey, instance, cacheTimeout);
-						logger.info(">>>>>>>>>>>> xxl-glue, async fresh instance, name:{}", name);
+				while (true) {
+					try {
+						String name = freshCacheQuene.poll();
+						if (name!=null && name.trim().length()>0) {
+							GlueHandler instance = GlueFactory.glueFactory.loadNewInstance(name);
+							if (instance!=null) {
+								glueInstanceMap.put(name, instance);
+								glueCacheMap.put(name, GlueFactory.glueFactory.cacheTimeout==-1?-1:(System.currentTimeMillis() + GlueFactory.glueFactory.cacheTimeout));
+								logger.info(">>>>>>>>>>>> xxl-glue, async fresh cache by new instace success, name:{}", name);
+							}
+						} else {
+							TimeUnit.SECONDS.sleep(3);
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		});
@@ -186,26 +215,26 @@ public class GlueFactory implements ApplicationContextAware {
 	public static Object glue(String name, Map<String, Object> params) throws Exception{
 		return GlueFactory.glueFactory.loadInstance(name).handle(params);
 	}
-	public static void freshGlue(GlueMessage glueMessage){
-		// check warn-up
-		boolean isMessageApply = true;
+	public static void clearCache(GlueMessage glueMessage){
+		// check if match appName
+		boolean isMatchAppName = true;
 		if (glueMessage.getAppnames()!=null && glueMessage.getAppnames().size()>0) {
 			if (glueMessage.getAppnames().contains(GlueFactory.glueFactory.appName)) {
-				isMessageApply = true;
+				isMatchAppName = true;
 			} else {
-				isMessageApply = false;
+				isMatchAppName = false;
 			}
 		} else {
-			isMessageApply = true;
+			isMatchAppName = true;
 		}
+		logger.info(">>>>>>>>>>> xxl-glue, receive glue message, glue:{}, isMatch:{}", glueMessage.getName(), isMatchAppName);
 		
-		if (isMessageApply) {
-			// 0-update, 1-delete, 2-add
-			if (glueMessage.getType() == 0 || glueMessage.getType() == 2) {
-				GlueFactory.glueFactory.freshGlueInstance(glueMessage.getName());
-			} else if (glueMessage.getType() == 1) {
-				String cacheInstanceKey = generateInstanceCacheKey(glueMessage.getName());
-				LocalCache.getInstance().remove(cacheInstanceKey);
+		if (isMatchAppName) {
+			if (glueMessage.getType() == GlueMessageType.CLEAR_CACHE) {
+				GlueFactory.freshCacheQuene.add(glueMessage.getName());
+			} else if (glueMessage.getType() == GlueMessageType.DELETE) {
+				glueInstanceMap.remove(glueMessage.getName());
+				glueCacheMap.remove(glueMessage.getName());
 			}
 		}
 	}

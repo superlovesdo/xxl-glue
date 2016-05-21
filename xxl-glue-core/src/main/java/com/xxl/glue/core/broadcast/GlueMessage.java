@@ -19,9 +19,9 @@ public class GlueMessage {
 	public Set<String> appnames;
 	
 	/**
-	 * type : 0-update, 1-delete, 2-add
+	 * type : 0-sync, 1-delete
 	 */
-	public int type;
+	public GlueMessageType type;
 
 	public String getName() {
 		return name;
@@ -39,12 +39,19 @@ public class GlueMessage {
 		this.appnames = appnames;
 	}
 
-	public int getType() {
+	public GlueMessageType getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(GlueMessageType type) {
 		this.type = type;
+	}
+
+	/**
+	 * type for glue message
+	 */
+	public enum GlueMessageType{
+		CLEAR_CACHE, DELETE
 	}
 	
 }

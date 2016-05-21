@@ -74,6 +74,13 @@ public class CodeController {
 		return codeService.updateCodeSource(codeInfo);
 	}
 	
+	@RequestMapping("/clearCache")
+	@ResponseBody
+	@PermessionLimit
+	public ReturnT<String> clearCache(int id, String appNames){
+		return codeService.clearCache(id, appNames);
+	}
+	
 	/*@RequestMapping("/demoEditor")
 	@PermessionLimit
 	public String demoEditor(HttpServletRequest request){

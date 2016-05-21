@@ -23,6 +23,7 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 	                { 
 	                	"data": 'addTime', 
 	                	"bSortable": false, 
+	                	"visible" : false, 
 	                	"render": function ( data, type, row ) {
 	                		return data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
 	                	}
@@ -40,32 +41,13 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
                     	 "targets": 6,
                          "data": "id",
                          "render": function ( data, type, row ) {
-                        	 $('#delCode_' + row.id).on('click', function(){
-                        		 ComAlert.confirm("确定要进行删除操作，该操作不可恢复",
-                    			     function(){
-                    				 	$.ajax({
-                    						type : 'POST',
-                    						url : base_url + 'code/delCode',
-                    						data : {
-                    							id : row.id
-                    						},
-                    						dataType : "json",
-                    						success : function(data){
-                    							if (data.code == 200) {
-                    								ComAlert.alert("删除成功", function(){
-                    									codeTable.fnDraw();
-                    		     					});
-                    							} else {
-                    								ComAlert.alert(data.msg);
-                    							}
-                    						}
-                    					});
-                    				}
-                        	 	);
-                        	 });
-                        	 var editUrl = base_url + "code/codeSourceEditor?id=" + row.id;
-                        	 var html = '<button type="button" class="yellow ui tiny button" onclick="javascript:window.open(\''+editUrl+'\');">编辑</button>' + 
-                             '<button type="button" class="red ui tiny button delCode" _id="'+ row.id +'" >删除</button>';
+                        	 var glueUrl = base_url + "code/codeSourceEditor?id=" + row.id;
+                        	 
+                        	 var html = '';
+                        	 html += '<button type="button" class="teal ui mini button clearCache" _id="'+ row.id +'" >清除缓存</button>';
+                        	 html += '<button type="button" class="teal ui mini button" onclick="javascript:window.open(\''+glueUrl+'\');">Glue</button>';
+                        	 html += '<button type="button" class="blue ui mini button" onclick="javascript:window.open(\''+glueUrl+'\');">编辑</button>';
+                        	 html += '<button type="button" class="red ui mini button delCode" _id="'+ row.id +'" >删除</button>';
                              return html;
                          }
                      }
@@ -105,6 +87,42 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
 	$('#codeName').bind('keyup', function(event) {
 		if (event.keyCode == "13") {
 			$('#searchBtn').click();
+		}
+	});
+	
+	// 清除GLUE缓存
+	$('#code_list').on('click', '.clearCache', function(){
+		var _id = $(this).attr('_id');
+		$('#clearCacheModal .form input[name="id"]').val(_id);
+		$('#clearCacheModal').modal({
+			closable  : false,
+			duration : 100,
+			allowMultiple: true,
+			onApprove : function(){	},
+		    onDeny : function() {	}
+		}).modal('show');
+		
+	});
+	// 清除GLUE缓存 form
+	$('#clearCacheModal .form').form({
+		onSuccess: function(){
+			$.ajax({
+				type : 'POST',
+				url : base_url + 'code/clearCache',
+				data : $("#clearCacheModal .form").serialize(),
+				dataType : "json",
+				success : function(data){
+					if (data.code == 200) {
+						ComAlert.alert('操作成功', function(){
+							codeTable.fnDraw();
+						});
+					} else {
+						$('#clearCacheModal .form').removeClass('success').addClass('error');
+						$('#clearCacheModal .form .error').html('<ul class="list"><li>'+ data.msg +'</li></ul>');
+					}
+				}
+			});
+			return false;	// 避免默认return true表单提交
 		}
 	});
 	
@@ -153,15 +171,15 @@ define(['jquery', 'semantic-comalert', 'moment', 'datatables-jquery', 'jquery.va
               	rules: [
                 	{
                   		type   : 'empty',
-                  		prompt : '请输入“Code名称”'
+                  		prompt : '请输入“GLUE名称”'
                 	},
                 	{
                 		type   : 'length[6]',
-                  		prompt : '“Code名称”长度应该大于6位'
+                  		prompt : '“GLUE名称”长度应该大于6位'
                 	},
                 	{
                         type   : 'regExp[/^[a-zA-Z][a-zA-Z0-9_]*$/]',
-                        prompt : '“Code名称”只支持英文字母开头，且只允许由英文字母、数字和下划线组成'
+                        prompt : '“GLUE名称”只支持英文字母开头，且只允许由英文字母、数字和下划线组成'
                 	}
               	]
             },

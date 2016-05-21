@@ -1,8 +1,10 @@
 package com.xxl.admin.service.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +19,7 @@ import com.xxl.admin.dao.ICodeLogDao;
 import com.xxl.admin.service.ICodeService;
 import com.xxl.admin.service.IJmsSendService;
 import com.xxl.glue.core.broadcast.GlueMessage;
+import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
 
 @Service
 public class CodeServiceImpl implements ICodeService {
@@ -66,7 +69,7 @@ public class CodeServiceImpl implements ICodeService {
 		// pub
 		GlueMessage message = new GlueMessage();
 		message.setName(codeInfo.getName());
-		message.setType(1);
+		message.setType(GlueMessageType.DELETE);
 		message.setAppnames(null);
 		jmsSendService.glueTopicPub(message);
 		return ReturnT.SUCCESS;
@@ -84,19 +87,13 @@ public class CodeServiceImpl implements ICodeService {
 		// check old
 		CodeInfo codeInfo_old = codeInfoDao.loadCodeByName(codeInfo.getName());
 		if (codeInfo_old != null) {
-			return new ReturnT<String>(500, "“Code名称”已存在");
+			return new ReturnT<String>(500, "“GLUE名称”已存在");
 		}
 		// save
 		int ret = codeInfoDao.save(codeInfo);
 		if (ret < 1) {
 			return new ReturnT<String>(500, "新增失败");
 		}
-		// pub
-		GlueMessage message = new GlueMessage();
-		message.setName(codeInfo.getName());
-		message.setType(2);
-		message.setAppnames(null);
-		jmsSendService.glueTopicPub(message);
 		return ReturnT.SUCCESS;
 	}
 
@@ -109,12 +106,12 @@ public class CodeServiceImpl implements ICodeService {
 			}
 		}
 		if (StringUtils.isBlank(codeInfo.getRemark())) {
-			return new ReturnT<String>(500, "“Glue备注”不可为空");
+			return new ReturnT<String>(500, "“GLUE备注”不可为空");
 		}
 		// check old
 		CodeInfo codeInfo_old = codeInfoDao.loadCode(codeInfo.getId());
 		if (codeInfo_old==null) {
-			return new ReturnT<String>(500, "“Code”不存在");
+			return new ReturnT<String>(500, "“GLUE”不存在");
 		}
 		// update
 		int ret = codeInfoDao.update(codeInfo);
@@ -132,12 +129,6 @@ public class CodeServiceImpl implements ICodeService {
 		}
 		// remove log more than 10
 		codeLogDao.removeOldLogs(codeInfo_old.getName());
-		// pub
-		GlueMessage message = new GlueMessage();
-		message.setName(codeInfo_old.getName());
-		message.setType(0);
-		message.setAppnames(null);
-		jmsSendService.glueTopicPub(message);
 		return ReturnT.SUCCESS;
 	}
 
@@ -149,6 +140,28 @@ public class CodeServiceImpl implements ICodeService {
 	@Override
 	public List<CodeLog> loadLogs(String name) {
 		return codeLogDao.loadLogsByName(name);
+	}
+
+	@Override
+	public ReturnT<String> clearCache(int id, String appNames) {
+		CodeInfo codeInfo = codeInfoDao.loadCode(id);
+		if (codeInfo == null) {
+			return new ReturnT<String>(500, "“GLUE”不存在");
+		}
+		// pub
+		Set<String> appList = new HashSet<String>();
+		if (StringUtils.isNotBlank(appNames)) {
+			for (String appName : appNames.split(",")) {
+				appList.add(appName);
+			}
+		}
+		
+		GlueMessage message = new GlueMessage();
+		message.setName(codeInfo.getName());
+		message.setType(GlueMessageType.CLEAR_CACHE);
+		message.setAppnames(appList);
+		jmsSendService.glueTopicPub(message);
+		return ReturnT.SUCCESS;
 	}
 
 }
