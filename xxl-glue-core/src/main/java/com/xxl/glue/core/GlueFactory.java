@@ -193,7 +193,7 @@ public class GlueFactory implements ApplicationContextAware {
 				while (true) {
 					try {
 						String name = freshCacheQuene.poll();
-						if (name!=null && name.trim().length()>0) {
+						if (name!=null && name.trim().length()>0 && glueInstanceMap.get(name)!=null) {
 							GlueHandler instance = GlueFactory.glueFactory.loadNewInstance(name);
 							if (instance!=null) {
 								glueInstanceMap.put(name, instance);
