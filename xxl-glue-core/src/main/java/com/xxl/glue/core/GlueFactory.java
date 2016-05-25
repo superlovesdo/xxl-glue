@@ -169,7 +169,7 @@ public class GlueFactory implements ApplicationContextAware {
 			if (instanceTim == null) {
 				ifValid = false;
 			} else {
-				if (instanceTim == -1) {
+				if (instanceTim.intValue() == -1) {
 					ifValid = true;	
 				} else if (System.currentTimeMillis() > instanceTim) {
 					ifValid = false;
@@ -177,6 +177,7 @@ public class GlueFactory implements ApplicationContextAware {
 			}
 			if (!ifValid) {
 				freshCacheQuene.add(name);
+				glueCacheMap.put(name, Long.valueOf(-1));	// 缓存时间临时设置为-1，永久生效，避免并发情况下多次推送异步刷新队列；
 			}
 		}
 		return instance;
