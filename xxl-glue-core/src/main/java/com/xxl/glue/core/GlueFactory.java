@@ -23,6 +23,7 @@ import com.xxl.glue.core.broadcast.GlueMessage;
 import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
 import com.xxl.glue.core.handler.GlueHandler;
 import com.xxl.glue.core.loader.GlueLoader;
+import com.xxl.glue.core.loader.impl.FileGlueLoader;
 
 import groovy.lang.GroovyClassLoader;
 
@@ -63,7 +64,7 @@ public class GlueFactory implements ApplicationContextAware {
 	/**
 	 * code source loader
 	 */
-	private GlueLoader glueLoader;
+	private GlueLoader glueLoader = new FileGlueLoader();
 	public void setGlueLoader(GlueLoader glueLoader) {
 		this.glueLoader = glueLoader;
 	}
@@ -81,8 +82,10 @@ public class GlueFactory implements ApplicationContextAware {
 	/**
 	 * inject service of spring
 	 * @param instance
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgument 
 	 */
-	public void injectService(Object instance){
+	public void injectService(Object instance) throws Exception{
 		if (instance==null) {
 			return;
 		}
@@ -109,13 +112,7 @@ public class GlueFactory implements ApplicationContextAware {
 			
 			if (fieldBean!=null) {
 				field.setAccessible(true);
-				try {
-					field.set(instance, fieldBean);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+				field.set(instance, fieldBean);
 			}
 		}
 	}
