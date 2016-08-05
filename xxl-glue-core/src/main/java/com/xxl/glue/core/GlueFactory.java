@@ -82,8 +82,8 @@ public class GlueFactory implements ApplicationContextAware {
 	/**
 	 * inject service of spring
 	 * @param instance
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgument 
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgument
 	 */
 	public void injectService(Object instance) throws Exception{
 		if (instance==null) {
@@ -188,6 +188,34 @@ public class GlueFactory implements ApplicationContextAware {
 			@Override
 			public void run() {
 				while (true) {
+					// take glue need refresh
+					String name = null;
+					try {
+						name = freshCacheQuene.take();
+					} catch (InterruptedException e) {
+						logger.error("", e);
+					}
+
+					// refresh
+					if (name!=null && name.trim().length()>0 && glueInstanceMap.get(name)!=null) {
+						GlueHandler instance = null;
+						try {
+							instance = GlueFactory.glueFactory.loadNewInstance(name);
+						} catch (Exception e) {
+							logger.error("", e);
+						}
+
+						if (instance!=null) {
+							glueInstanceMap.put(name, instance);
+							glueCacheMap.put(name, GlueFactory.glueFactory.cacheTimeout==-1?-1:(System.currentTimeMillis() + GlueFactory.glueFactory.cacheTimeout));
+							logger.warn(">>>>>>>>>>>> xxl-glue, async fresh cache by new instace success, name:{}", name);
+						} else {
+							glueInstanceMap.remove(name);
+							glueCacheMap.remove(name);
+							logger.warn(">>>>>>>>>>>> xxl-glue, async fresh cache by new instace fail, old instance removed, name:{}", name);
+						}
+					}
+					/*
 					try {
 						String name = freshCacheQuene.poll();
 						if (name!=null && name.trim().length()>0 && glueInstanceMap.get(name)!=null) {
@@ -204,6 +232,7 @@ public class GlueFactory implements ApplicationContextAware {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					*/
 				}
 			}
 		});
