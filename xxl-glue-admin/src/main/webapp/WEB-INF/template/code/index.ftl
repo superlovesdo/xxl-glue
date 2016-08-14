@@ -95,7 +95,7 @@ public class DemoGlueHandler implements GlueHandler {
 
 	@Override
 	public Object handle(Map<String, Object> params) {
-		Logger.warn("DemoGlueHandler run success.");
+		Logger.warn("GLUE : Hello World .");
 		return new Object();
 	}
 

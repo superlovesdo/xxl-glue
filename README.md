@@ -65,27 +65,7 @@ GlueHandler支持 **在线编译开发, 实时编译，动态推送更新**, 可
 登陆GLUE系统，点击新增，填写 “GLUE名称”（该名称是该GLUE项的唯一标示）和简介，确定后即新增一条GLUE。
 点击 “编译”按钮，即可进入GlueHandler开发界面，可在该界面开发GlueHandler代码，也可以在IDE中开发完成后粘贴进来，默认已经初始化一个Demo。
 每个GlueHandler必须是实现统一父接口GlueHandler的子类；
-```
-package com.dianping.wed.job;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.dianping.glue.core.handler.GlueHandler;
 
-/**
- * 示例GLUE
- * @author xuxueli 2016-5-24 20:30:19
- */
-public class DemoHandler implements GlueHandler {
-    private static Logger logger = LoggerFactory.getLogger(DemoHandler.class);
-
-    @Override
-    public Object handle(Map<String, Object> params) {
-        logger.warn("GLUE : Hello World .");
-        return 5;
-    }
-}
-```
 	
 ##### 测试
 
