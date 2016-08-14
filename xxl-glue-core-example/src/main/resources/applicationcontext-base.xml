@@ -11,6 +11,16 @@
 
 	<context:component-scan base-package="com.xxl.glue.example.service.impl, com.xxl.glue.example.dao.impl" />
 
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="fileEncoding" value="utf-8" />
+		<property name="locations">
+			<list>
+				<value>classpath*:jdbc.properties</value>
+				<value>classpath*:jms.properties</value>
+			</list>
+		</property>
+	</bean>
+
 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
 		<property name="templateLoaderPath" value="/WEB-INF/template/" />
 		<property name="freemarkerSettings">

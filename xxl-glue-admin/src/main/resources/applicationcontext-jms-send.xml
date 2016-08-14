@@ -10,7 +10,7 @@
 	<bean id="jmsPoolConnFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
 		<property name="connectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-				<property name="brokerURL" value="failover:(tcp://127.0.0.1:61616)" />
+				<property name="brokerURL" value="${brokerURL}" />
 				<property name="transportListener">
 					<bean class="com.xxl.admin.core.listener.JmsTransportListener" />
 				</property>
