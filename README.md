@@ -2,8 +2,9 @@
 ## 一、简介
 
 #### 1.1 概述
-XXL-GLUE 可以为各种业务平台提供统一的逻辑管理服务。
-用户可以将代码逻辑(GlueHandler)托管在XXL-GLUE平台上, 然后在业务逻辑中可以方便的引用和执行被托管的代码逻辑。被托管的代码片段支持: 在线修改、**实时编译，动态推送更新**。从而, 托管的逻辑代码的的变动不需要进行编译、打包、部署和重启线上机器等操作, 提高开发效率。
+XXL-GLUE 可以为各种业务平台提供统一的逻辑管理服务, 逻辑的基本单元是GlueHandler。
+
+GlueHandler支持 **在线编译开发, 实时编译，动态推送更新**, 可以方便的嵌入到线上各个业务线的各个业务中。从而扩展部分模块的动态语言特性, 可以节省部分项目编译、打包、部署和重启线上机器等流程消耗, 提高开发效率。
 
 概念解释:
 - GlueHandler：即业务中抽象且离散的逻辑单元，本质上是实现统一父接口IGlueHandler的是子类，调用时将会执行其接口中的handle方法并return执行结果数据，代码修改后支持**实时编译，动态推送更新**，因此可以方便的修改线上业务逻辑，而不需要进行打包、部署和上线等操作。
@@ -22,7 +23,7 @@ XXL-GLUE 可以为各种业务平台提供统一的逻辑管理服务。
 - [git.oschina地址](https://git.oschina.net/xuxueli0323/xxl-glue)
 
 博客地址
-- [oschina地址](http://my.oschina.net/xuxueli/blog/732279)
+- [oschina地址](http://my.oschina.net/xuxueli/blog/732499)
 
 技术交流群(仅作技术交流)：367260654    [![image](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=4686e3fe01118445c75673a66b4cc6b2c7ce0641528205b6f403c179062b0a52 )
 
@@ -62,7 +63,7 @@ XXL-GLUE 可以为各种业务平台提供统一的逻辑管理服务。
 启动"GLUE管理中心"(xxl-glue-admin),登录系统;
 
 登陆GLUE系统，点击新增，填写 “GLUE名称”（该名称是该GLUE项的唯一标示）和简介，确定后即新增一条GLUE。
-点击 “编译”按钮，即可进入GlueHandler开发界面，可在该界面开发GlueHandler代码，也可以在IDE中开发完成后粘贴进来，默认已经实例化一个Demo。
+点击 “编译”按钮，即可进入GlueHandler开发界面，可在该界面开发GlueHandler代码，也可以在IDE中开发完成后粘贴进来，默认已经初始化一个Demo。
 每个GlueHandler必须是实现统一父接口GlueHandler的子类；
 ```
 package com.dianping.wed.job;
@@ -227,7 +228,35 @@ public class DemoHandlerCImpl implements GlueHandler {
 ```
 
 
-### 四、原理剖析
+
+### 四、操作指南
+##### 第一步：登陆GLUE
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14200804_Yuox.png "在这里输入图片标题")
+
+##### 第二步：新建GLUE项
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14200827_kkQX.png "在这里输入图片标题")
+
+##### 第三步：GLUE列表
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14200852_Q3Mj.png "在这里输入图片标题")
+
+##### 第四步：开发GLUE代码
+点击右侧 “编辑” 按钮，进入GLUE开发的Wed IDE界面。默认已经初始化Hello World示例代码，如需开发业务代码，只需要在handle方法中开发即可。
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14200932_HAsd.png "在这里输入图片标题")
+
+##### 第五步：一句话执行GlueHandler
+首先确定项目中已经接入GLUE（参考上文“三步接入GLUE”，接入非常方便）；
+然后执行一行代码即可；
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14200956_vxNj.png "在这里输入图片标题")
+
+##### 第六步：推送更新
+GlueHandler在第一次加载之后将会缓存在内存中，点击右侧 “清楚缓存” 按钮可以推送更新，填写AppName将会精确定位单个项目进行缓存更新，如果为空则全站广播。
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14201023_Y3Be.png "在这里输入图片标题")
+
+
+### 五、原理剖析
 
 ##### Groovy : 用于 Java 虚拟机的一种敏捷的动态语言;
 - 1、以强大的Java为基础；
@@ -299,36 +328,17 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 - 3、周期性的异步刷新类加载器，避免因全局类加载器装载Class过多且不及时卸载导致的PermGen被用满。
 
 
-
-### 九、操作指南
-##### 第一步：登陆GLUE
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200804_Yuox.png "在这里输入图片标题")
-
-##### 第二步：新建GLUE项
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200827_kkQX.png "在这里输入图片标题")
-
-##### 第三步：GLUE列表
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200852_Q3Mj.png "在这里输入图片标题")
-
-##### 第四步：开发GLUE代码
-点击右侧 “编辑” 按钮，进入GLUE开发的Wed IDE界面。默认已经初始化Hello World示例代码，如需开发业务代码，只需要在handle方法中开发即可。
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200932_HAsd.png "在这里输入图片标题")
-
-##### 第五步：一句话执行GlueHandler
-首先确定项目中已经接入GLUE（参考上文“三步接入GLUE”，接入非常方便）；
-然后执行一行代码即可；
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200956_vxNj.png "在这里输入图片标题")
-
-##### 第六步：推送更新
-GlueHandler在第一次加载之后将会缓存在内存中，点击右侧 “清楚缓存” 按钮可以推送更新，填写AppName将会精确定位单个项目进行缓存更新，如果为空则全站广播。
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14201023_Y3Be.png "在这里输入图片标题")
-
 ## 六、历史版本
 #### 版本1.0.0
+- 1、交互：提供Wed IDE，支持在线管理和开发GlueHandler；
+- 2、简单：Glue可以非常方便的嵌入Spring容器，与现有项目集成方便，上手简单；
+- 3、实时：GlueHandler变更时，将会实时推送更新；
+- 4、版本：支持50个历史版本的版本回溯；
+- 5、注入：支持@Resource和@Autowired两种方式注入Spring容器中服务
+
 #### 版本1.1.0
+- 1、重要重构;
+- 2、交互优化;
 
 ## 七、其他
 
