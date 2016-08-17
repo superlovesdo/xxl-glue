@@ -61,6 +61,7 @@ Tips: 可以参考"分布式配置管理平台"的概念来帮助我们来认识
 - 配置JDBC地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jdbc.properties"
 - 配置ActiveMQ地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jms.properties"
 
+
 ##### 开发第一个GlueHandler (Hello World) 
 
 启动"GLUE管理中心"(xxl-glue-admin),登录系统;
@@ -75,6 +76,16 @@ Tips: 可以参考"分布式配置管理平台"的概念来帮助我们来认识
 启动"接入XXL-GLUE的Demo项目"(xxl-glue-core-example),访问以下链接测试
 
     http://localhost:8080/xxl-glue-core-example/code/GLUE名称
+    
+##### 如何Debug测试GlueHandler
+
+源码加载器配置,见项目"xxl-glue-core-example"的"applicationcontext-glue.xml"配置中"GlueFactory"实例的"glueLoader"属性;
+
+- dbGlueLoader(数据库加载器,不支持Debug,源码线上维护): 默认XXL-GLUE在接入方通过加载数据库中GLUE源码进而实例化并执行, 需要配置一个"dbGlueLoader"。
+- FileGlueLoader(本地加载器,支持Debug): XXL-GLUE支持配置本地加载器, 只是掉上述配置中的"glueLoader"属性即可,则使用默认的文件加载器;拥有以下特点:
+    - 默认加载项目"resources/config/glue"目录下的groovy文件,文件名称必须和配置的GlueHandler名称一致;
+    - 会循环遍历该目录下子目录文件进行匹配,因此文件可以在该目录下自由存放;
+    - FileGlueLoader方式使用XXL-GLUE,支持GlueHandler的debug断点;
     
 ##### 业务中如何执行自己的GlueHandler
 
