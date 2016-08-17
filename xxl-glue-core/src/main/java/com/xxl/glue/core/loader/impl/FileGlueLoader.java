@@ -1,13 +1,9 @@
 package com.xxl.glue.core.loader.impl;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import com.xxl.glue.core.loader.GlueLoader;
+
+import java.io.*;
+
 
 /**
  * load glue in local file
@@ -39,7 +35,7 @@ public class FileGlueLoader implements GlueLoader {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * find file under base path
 	 * @param basePath
@@ -47,24 +43,27 @@ public class FileGlueLoader implements GlueLoader {
 	 * @return
 	 */
 	private static File findGlueFile(File basePath, String glueFileName) {
-        if (basePath.exists() && basePath.isDirectory()) {
-            File[] files = basePath.listFiles();
-            if (files.length == 0) {
-                return null;
-            } else {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        return findGlueFile(file, glueFileName);
-                    } else {
-                    	if (glueFileName.equals(file.getName())) {
+		if (basePath.exists() && basePath.isDirectory()) {
+			File[] files = basePath.listFiles();
+			if (files.length == 0) {
+				return null;
+			} else {
+				for (File file : files) {
+					if (file.isDirectory()) {
+						File childFile = findGlueFile(file, glueFileName);
+						if (childFile!=null && glueFileName.equals(childFile.getName())){
+							return childFile;
+						}
+					} else {
+						if (glueFileName.equals(file.getName())) {
 							return file;
 						}
-                    }
-                }
-            }
-        }
-        return null;
-    }
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
 	private static String readGlueFile(File logFile){
 		try {
