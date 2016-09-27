@@ -1,16 +1,12 @@
 package com.xxl.glue.core;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
+import com.xxl.glue.core.broadcast.GlueMessage;
+import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
+import com.xxl.glue.core.broadcast.ZkTopicConsumerUtil;
+import com.xxl.glue.core.handler.GlueHandler;
+import com.xxl.glue.core.loader.GlueLoader;
+import com.xxl.glue.core.loader.impl.FileGlueLoader;
+import groovy.lang.GroovyClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,13 +15,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import com.xxl.glue.core.broadcast.GlueMessage;
-import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
-import com.xxl.glue.core.handler.GlueHandler;
-import com.xxl.glue.core.loader.GlueLoader;
-import com.xxl.glue.core.loader.impl.FileGlueLoader;
-
-import groovy.lang.GroovyClassLoader;
+import javax.annotation.Resource;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * glue factory, product class/object by name
@@ -82,8 +79,7 @@ public class GlueFactory implements ApplicationContextAware {
 	/**
 	 * inject service of spring
 	 * @param instance
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgument
+	 * @throws Exception
 	 */
 	public void injectService(Object instance) throws Exception{
 		if (instance==null) {
@@ -133,6 +129,10 @@ public class GlueFactory implements ApplicationContextAware {
 					if (instance instanceof GlueHandler) {
 						this.injectService(instance);
 						logger.info(">>>>>>>>>>>> xxl-glue, loadNewInstance success, name:{}", name);
+
+                        // watch topic on zk
+                        ZkTopicConsumerUtil.watchTopic(name);
+
 						return (GlueHandler) instance;
 					} else {
 						throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, "
@@ -140,6 +140,7 @@ public class GlueFactory implements ApplicationContextAware {
 					}
 				}
 			}
+
 		}
 		throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, instance is null");
 	}
@@ -177,6 +178,9 @@ public class GlueFactory implements ApplicationContextAware {
 				glueCacheMap.put(name, Long.valueOf(-1));	// 缓存时间临时设置为-1，永久生效，避免并发情况下多次推送异步刷新队列；
 			}
 		}
+
+		logger.info(">>>>>>>>>>>glueInstanceMap loadInstance=" + glueInstanceMap);
+
 		return instance;
 	}
 	
@@ -188,13 +192,15 @@ public class GlueFactory implements ApplicationContextAware {
 			@Override
 			public void run() {
 				while (true) {
-					// take glue need refresh
 					String name = null;
 					try {
+						// take glue need refresh
 						name = freshCacheQuene.take();
-					} catch (InterruptedException e) {
+					} catch (Exception e) {
 						logger.error("", e);
 					}
+
+					logger.info(">>>>>>>>>>>glueInstanceMap freshCacheQuene=" + glueInstanceMap);
 
 					// refresh
 					if (name!=null && name.trim().length()>0 && glueInstanceMap.get(name)!=null) {
@@ -215,24 +221,6 @@ public class GlueFactory implements ApplicationContextAware {
 							logger.warn(">>>>>>>>>>>> xxl-glue, async fresh cache by new instace fail, old instance removed, name:{}", name);
 						}
 					}
-					/*
-					try {
-						String name = freshCacheQuene.poll();
-						if (name!=null && name.trim().length()>0 && glueInstanceMap.get(name)!=null) {
-							GlueHandler instance = GlueFactory.glueFactory.loadNewInstance(name);
-							if (instance!=null) {
-								glueInstanceMap.put(name, instance);
-								glueCacheMap.put(name, GlueFactory.glueFactory.cacheTimeout==-1?-1:(System.currentTimeMillis() + GlueFactory.glueFactory.cacheTimeout));
-								logger.info(">>>>>>>>>>>> xxl-glue, async fresh cache by new instace success, name:{}", name);
-							}
-						} else {
-							TimeUnit.SECONDS.sleep(3);
-						}
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					*/
 				}
 			}
 		});
@@ -255,7 +243,7 @@ public class GlueFactory implements ApplicationContextAware {
 			isMatchAppName = true;
 		}
 		logger.info(">>>>>>>>>>> xxl-glue, receive glue message, glue:{}, isMatch:{}", glueMessage.getName(), isMatchAppName);
-		
+
 		if (isMatchAppName) {
 			if (glueMessage.getType() == GlueMessageType.CLEAR_CACHE) {
 				GlueFactory.freshCacheQuene.add(glueMessage.getName());

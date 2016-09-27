@@ -1,22 +1,20 @@
 package com.xxl.glue.example.controller;
 
 
+import com.xxl.glue.core.GlueFactory;
+import com.xxl.glue.core.loader.GlueLoader;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.xxl.glue.core.GlueFactory;
-import com.xxl.glue.core.loader.GlueLoader;
 
 /**
  * demo controller
@@ -58,7 +56,7 @@ public class IndexController {
 	        e.printStackTrace(new PrintWriter(writer));
 	        result = writer.toString();
 		}
-		
+
 		return MessageFormat.format("code name : {0}<hr><pre>{1}</pre>", name, result);
 	}
 	

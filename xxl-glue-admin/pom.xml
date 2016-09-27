@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>com.xxl</groupId>
 		<artifactId>xxl-glue</artifactId>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 	</parent>
 	<artifactId>xxl-glue-admin</artifactId>
-	<version>1.0.2</version>
 	<packaging>war</packaging>
 
 	<properties>
 		<spring.version>3.2.14.RELEASE</spring.version>
+		<xxl-glue-core.version>1.2.0</xxl-glue-core.version>
 	</properties>
 
 	<dependencies>
@@ -128,24 +128,11 @@
 			<version>5.1.29</version>
 		</dependency>
 
-		<!-- activemq-all -->
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-all</artifactId>
-			<version>5.13.0</version>
-		</dependency>
-		<!-- commons-pool2 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
-			<version>2.2</version>
-		</dependency>
-
 		<!-- xxl-glue-core : pub code -->
 		<dependency>
 			<groupId>com.xxl</groupId>
 			<artifactId>xxl-glue-core</artifactId>
-			<version>1.1.0</version>
+			<version>${xxl-glue-core.version}</version>
 		</dependency>
 
 	</dependencies>

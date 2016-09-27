@@ -1,25 +1,20 @@
 package com.xxl.admin.service.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.xxl.admin.core.model.CodeInfo;
 import com.xxl.admin.core.model.CodeLog;
 import com.xxl.admin.core.result.ReturnT;
 import com.xxl.admin.dao.ICodeInfoDao;
 import com.xxl.admin.dao.ICodeLogDao;
 import com.xxl.admin.service.ICodeService;
-import com.xxl.admin.service.IJmsSendService;
 import com.xxl.glue.core.broadcast.GlueMessage;
 import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
+import com.xxl.glue.core.broadcast.ZkTopicConsumerUtil;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class CodeServiceImpl implements ICodeService {
@@ -28,8 +23,6 @@ public class CodeServiceImpl implements ICodeService {
 	private ICodeInfoDao codeInfoDao;
 	@Autowired
 	private ICodeLogDao codeLogDao;
-	@Autowired
-	private IJmsSendService jmsSendService;
 
 	@Override
 	public Map<String, Object> pageList(int offset, int pagesize, String name) {
@@ -57,6 +50,7 @@ public class CodeServiceImpl implements ICodeService {
 			return new ReturnT<String>(500, "删除失败");
 		}
 		codeLogDao.delete(codeInfo.getName());
+
 		// save old (backup)
 		/*try {
 			CodeLog codeLog = new CodeLog();
@@ -66,12 +60,14 @@ public class CodeServiceImpl implements ICodeService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		// pub
+
+		// broadcast (pub)
 		GlueMessage message = new GlueMessage();
 		message.setName(codeInfo.getName());
 		message.setType(GlueMessageType.DELETE);
 		message.setAppnames(null);
-		jmsSendService.glueTopicPub(message);
+		ZkTopicConsumerUtil.broadcast(message);
+
 		return ReturnT.SUCCESS;
 	}
 
@@ -155,12 +151,14 @@ public class CodeServiceImpl implements ICodeService {
 				appList.add(appName);
 			}
 		}
-		
+
+		// broadcast
 		GlueMessage message = new GlueMessage();
 		message.setName(codeInfo.getName());
 		message.setType(GlueMessageType.CLEAR_CACHE);
 		message.setAppnames(appList);
-		jmsSendService.glueTopicPub(message);
+		ZkTopicConsumerUtil.broadcast(message);
+
 		return ReturnT.SUCCESS;
 	}
 
