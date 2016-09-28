@@ -2,15 +2,13 @@
 ## 一、简介
 
 #### 1.1 概述
-XXL-GLUE是一个分布式环境下的逻辑管理平台, 逻辑的基本单元是GlueHandler。
+XXL-GLUE 是一个分布式环境下的逻辑管理平台, 逻辑的基本单元是GlueHandler。
 
-GlueHandler支持 **在线编译开发, 实时编译，动态推送更新**, 可以方便的嵌入到线上各个业务线的各个业务中。从而扩展部分模块的动态语言特性, 可以节省部分项目编译、打包、部署和重启线上机器等流程消耗, 提高开发效率。
+**Tips:** 可以参考 “配置管理服务，如disconf diamond等” 的概念来帮助我们来认识和理解XXL-GLUE, 前者用于维护分布式环境下的配置信息, 推送配置更新; 后者功能更强大, 在拥有前者功能的基础之上, 甚至支持维护Java源代码(以GlueHandler为单位), 支持在线修改、推送更新和实时编译生效等;
 
 概念解释:
-- GlueHandler：即业务中抽象且离散的逻辑单元，本质上是实现统一父接口IGlueHandler的是子类，调用时将会执行其接口中的handle方法并return执行结果数据，代码修改后支持**实时编译，动态推送更新**，因此可以方便的修改线上业务逻辑，而不需要进行打包、部署和上线等操作。
+- GlueHandler：即业务中抽象且离散的逻辑单元, 可以方便的嵌入到线上各个业务线的各个业务中。从而扩展部分模块的动态语言特性, 可以节省部分项目编译、打包、部署和重启线上机器等流程消耗, 提高开发效率。本质上是实现统一父接口IGlueHandler的是子类，调用时将会执行其接口中的handle方法并return执行结果数据。
 - XXL-GLUE平台：提供逻辑单元（GlueHandler）推送功能，扩展JVM的动态语言支持。提供Wed IDE支持在线开发GlueHandler，并且实时推送更新。
-
-Tips: 可以参考"分布式配置管理平台"的概念来帮助我们来认识和理解XXL-GLUE, 前者用于维护分布式环境下的配置信息, 推送配置更新; 后者功能更强大, 在拥有前者功能的基础之上, 甚至支持维护Java源代码(以GlueHandler为单位), 支持在线修改、推送更新和实时编译生效等;
 
 #### 1.2 特性
 - 1、交互：提供Wed IDE，支持在线管理和开发GlueHandler；
@@ -36,8 +34,79 @@ Tips: 可以参考"分布式配置管理平台"的概念来帮助我们来认识
 - Tomcat7+
 - Mysql5.5+
 
+### 二、系统设计
 
-### 二、快速入门
+##### Groovy : 用于 Java 虚拟机的一种敏捷的动态语言;
+- 1、以强大的Java为基础；
+- 2、包含Python、Ruby、Smalltalk等语言强带附加功能，例如动态类型转换、闭包和元编程支持；
+- 3、一种成熟的面向对象语言，同时可用作纯粹的校验语言；
+- 4、适合与Spring动态语言支持一起使用，因为它专门为JVM设计，充分考虑Java继承；
+- 5、与Java代码互操作很容易；
+
+
+##### 1、系统模块组成
+- 1、Glue管理中心：负责管理GLUE，提供GLUE创建、删除，代码编辑等常规功能，以及GLUE刷新功能;
+- 2、Glue源码加载服务：GlueHandler源码远程加载服务，Pegion服务；
+- 3、Glue执行器：负载加载和实例化GlueHandler，提供公共API。
+
+##### 2、GlueHandler加载步骤
+系统中通过 GlueFactory.glue("Glue名称", "Map格式入参") 这一行代码执行对应的GlueHandler，内部执行逻辑如下；
+- 1、调用 “loadInstance(name)” 方式，从缓存中加载GlueHandler实例，如果缓存中存在该实例则返回，并执行GlueHandler的 “.handle(params)” 方法，完成一次调用；否则进入步骤2；
+- 2、如果缓存中没有GlueHandler实例，则调用 “loadNewInstance(name)” 方法，该方法将会顺序执行以下逻辑：
+    - 2.1 执行加载器 “glueLoader.load(name)”  方法加载GlueHandler源码；
+    - 2.2 执行 “groovyClassLoader.parseClass(codeSource);” 将源码通过Groovy的类加载器解析为Java类对象实例；
+    - 2.3 执行 “injectService(instance)” 方法，在此GlueHandler实例中注入Spring容器中服务；
+    - 2.4 加入缓存，返回该GlueHandler；
+
+##### 3、Spring服务注入
+支持 “Resource.class” 和 “Autowired.class” 两种方式为GlueHandler输入Spring服务，实现逻辑如下：
+- 1、 反射获取GlueHandler的Field数组；
+- 2、 遍历Field数组，根据其注解 “@Resource” 和 “@Autowired” 在Spring容器匹配服务（注入规则同Spring默认规则：@Autowired按类型注入；@Resource按照首先名称注入，失败则按照类型注入；）；
+- 3、将匹配到的Spring服务注入到该Field中。
+
+##### 4、缓存
+Glue中缓存的对象是“groovyClassLoader”解析生成的GlueHandler实例。
+
+GlueHandler缓存支持设置Timeout时间，单位毫秒，缓存失效时将会实例化加载新的GLueHander实例，Timeout设置为-1时将永不失效。
+
+Glue中通过ZK实现了一套广播机制, 采用广播的方式进行触发主动更新。
+
+##### 5、缓存更新（异步 + 覆盖）
+常规缓存更新，通常是通过remove(key)的方式进行缓存清理，然后在下次请求时将会以懒加载的方式进行缓存初始化，但是这样在并发环境中有雪崩的隐患。
+
+因此，GlueHandler采用 “异步（queue + thread）”+“覆盖”的方式进行GlueHandler更新，步骤如下：
+- 1、在接收到缓存更新的广播消息时，首先会将待更新的GlueHandler的名称push到待更新队列中；
+- 2、异步线程监控待更新队列，获取待更新GlueHandler名称，加载并实例化新GlueHandler实例；
+- 3、将新的GlueHandler实例，覆盖缓存中旧的GlueHandler实例，后续调用将会执行新的业务逻辑。
+
+##### 6、灰度更新
+GlueHandler通过广播的方式进行推送更新，在推送广播消息时支持输入待刷新该GlueHandler的项目名列表，只有匹配到的项目才会对本项目中GlueHandler进行覆盖更新，否则则忽视该条广播消息。
+
+##### 7、版本回溯
+GlueHandler的每次更新都会进行对上个版本的代码进行备份，备份数量支持配置，原则上无上限。
+同时，在Web IDE界面上，可以查看到所有的备份记录，并且可以方便的进行版本回退。
+
+##### 8、预热
+GlueHandler创建时和项目关联起来，这样在项目启动时会主动加载关联到的GlueHandler，避免懒加载引起的并发问题。
+
+##### 9、避免因Permanet Generation空间被占满引起的Full GC
+PermanetGeneration中存放的为一些class的信息等，当系统中要加载的类、反射的类和调用的方法较多时，Permanet Generation可能会被占满。
+
+GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC的问题，原因如下：
+
+系统在执行 “groovy.lang.GroovyClassLoader.parseClass(groovyScript)” 进行groovy代码解析时，Groovy为了保证解析后执行的都是最新的脚本内容，每进行一次解析都会生成一次新命名的Class文件，如下图：
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/14200626_QHdj.jpg "在这里输入图片标题")
+
+因此，如果Groovy类加载器设置为静态，当对同一段脚本均多次执行该方法时，会导致 “GroovyClassLoader” 装载的Class越来越多，从而导致PermGen被用满。
+
+为了避免出现类似问题，GLUE做了以下几点优化。
+- 1、针对每个GlueHandler解析后生成的Java对象实例做缓存，而不是代码本身做缓存；
+- 2、仅仅在接收到清除缓存的广播时解析生成新的GlueHandler实例对象，避免groovy的频繁解析，减少Class装载频率；
+- 3、周期性的异步刷新类加载器，避免因全局类加载器装载Class过多且不及时卸载导致的PermGen被用满。
+
+
+### 三、快速入门
 ##### 源码目录介绍
 
 - /db                : 数据库交表脚本位置
@@ -53,14 +122,10 @@ Tips: 可以参考"分布式配置管理平台"的概念来帮助我们来认识
 ##### 部署"GLUE管理中心"(xxl-glue-admin)
 
 - 配置JDBC地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jdbc.properties"
-- 配置ActiveMQ地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jms.properties"
-
 
 ##### 部署"接入XXL-GLUE的Demo项目"(xxl-glue-core-example)
 
 - 配置JDBC地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jdbc.properties"
-- 配置ActiveMQ地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jms.properties"
-
 
 ##### 开发第一个GlueHandler (Hello World) 
 
@@ -95,7 +160,7 @@ Tips: 可以参考"分布式配置管理平台"的概念来帮助我们来认识
 ```
 
 
-### 三、GlueHandler的三种经典使用场景, 
+### 四、GlueHandler的三种经典使用场景, 
 ##### 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
 ```
 package com.xxl.groovy.example.service.impl;
@@ -223,7 +288,7 @@ public class DemoHandlerCImpl implements GlueHandler {
 
 
 
-### 四、操作指南
+### 五、操作指南
 ##### 第一步：登陆GLUE
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14200804_Yuox.png "在这里输入图片标题")
 
@@ -248,78 +313,6 @@ public class DemoHandlerCImpl implements GlueHandler {
 GlueHandler在第一次加载之后将会缓存在内存中，点击右侧 “清楚缓存” 按钮可以推送更新，填写AppName将会精确定位单个项目进行缓存更新，如果为空则全站广播。
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14201023_Y3Be.png "在这里输入图片标题")
-
-
-### 五、原理剖析
-
-##### Groovy : 用于 Java 虚拟机的一种敏捷的动态语言;
-- 1、以强大的Java为基础；
-- 2、包含Python、Ruby、Smalltalk等语言强带附加功能，例如动态类型转换、闭包和元编程支持；
-- 3、一种成熟的面向对象语言，同时可用作纯粹的校验语言；
-- 4、适合与Spring动态语言支持一起使用，因为它专门为JVM设计，充分考虑Java继承；
-- 5、与Java代码互操作很容易；
-
-
-##### 1、系统模块组成
-- 1、Glue管理中心：负责管理GLUE，提供GLUE创建、删除，代码编辑等常规功能，以及GLUE刷新功能;
-- 2、Glue源码加载服务：GlueHandler源码远程加载服务，Pegion服务；
-- 3、Glue执行器：负载加载和实例化GlueHandler，提供公共API。
-
-##### 2、GlueHandler加载步骤
-系统中通过 GlueFactory.glue("Glue名称", "Map格式入参") 这一行代码执行对应的GlueHandler，内部执行逻辑如下；
-- 1、调用 “loadInstance(name)” 方式，从缓存中加载GlueHandler实例，如果缓存中存在该实例则返回，并执行GlueHandler的 “.handle(params)” 方法，完成一次调用；否则进入步骤2；
-- 2、如果缓存中没有GlueHandler实例，则调用 “loadNewInstance(name)” 方法，该方法将会顺序执行以下逻辑：
-    - 2.1 执行加载器 “glueLoader.load(name)”  方法加载GlueHandler源码；
-    - 2.2 执行 “groovyClassLoader.parseClass(codeSource);” 将源码通过Groovy的类加载器解析为Java类对象实例；
-    - 2.3 执行 “injectService(instance)” 方法，在此GlueHandler实例中注入Spring容器中服务；
-    - 2.4 加入缓存，返回该GlueHandler；
-
-##### 3、Spring服务注入
-支持 “Resource.class” 和 “Autowired.class” 两种方式为GlueHandler输入Spring服务，实现逻辑如下：
-- 1、 反射获取GlueHandler的Field数组；
-- 2、 遍历Field数组，根据其注解 “@Resource” 和 “@Autowired” 在Spring容器匹配服务（注入规则同Spring默认规则：@Autowired按类型注入；@Resource按照首先名称注入，失败则按照类型注入；）；
-- 3、将匹配到的Spring服务注入到该Field中。
-
-##### 4、缓存
-Glue中缓存的对象是“groovyClassLoader”解析生成的GlueHandler实例。
-
-GlueHandler缓存支持设置Timeout时间，单位毫秒，缓存失效时将会实例化加载新的GLueHander实例，Timeout设置为-1时将永不失效。
-
-Glue中通过activemq广播消息的方式进行触发主动更新。
-
-##### 5、缓存更新（异步 + 覆盖）
-常规缓存更新，通常是通过remove(key)的方式进行缓存清理，然后在下次请求时将会以懒加载的方式进行缓存初始化，但是这样在并发环境中有雪崩的隐患。
-
-因此，GlueHandler采用 “异步（queue + thread）”+“覆盖”的方式进行GlueHandler更新，步骤如下：
-- 1、在接收到缓存更新的广播消息时，首先会将待更新的GlueHandler的名称push到待更新队列中；
-- 2、异步线程监控待更新队列，获取待更新GlueHandler名称，加载并实例化新GlueHandler实例；
-- 3、将新的GlueHandler实例，覆盖缓存中旧的GlueHandler实例，后续调用将会执行新的业务逻辑。
-
-##### 6、灰度更新
-GlueHandler通过广播的方式进行推送更新，在推送广播消息时支持输入待刷新该GlueHandler的项目名列表，只有匹配到的项目才会对本项目中GlueHandler进行覆盖更新，否则则忽视该条广播消息。
-
-##### 7、版本回溯
-GlueHandler的每次更新都会进行对上个版本的代码进行备份，备份数量支持配置，原则上无上限。
-同时，在Web IDE界面上，可以查看到所有的备份记录，并且可以方便的进行版本回退。
-
-##### 8、预热
-GlueHandler创建时和项目关联起来，这样在项目启动时会主动加载关联到的GlueHandler，避免懒加载引起的并发问题。
-
-##### 9、避免因Permanet Generation空间被占满引起的Full GC
-PermanetGeneration中存放的为一些class的信息等，当系统中要加载的类、反射的类和调用的方法较多时，Permanet Generation可能会被占满。
-
-GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC的问题，原因如下：
-
-系统在执行 “groovy.lang.GroovyClassLoader.parseClass(groovyScript)” 进行groovy代码解析时，Groovy为了保证解析后执行的都是最新的脚本内容，每进行一次解析都会生成一次新命名的Class文件，如下图：
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200626_QHdj.jpg "在这里输入图片标题")
-
-因此，如果Groovy类加载器设置为静态，当对同一段脚本均多次执行该方法时，会导致 “GroovyClassLoader” 装载的Class越来越多，从而导致PermGen被用满。
-
-为了避免出现类似问题，GLUE做了以下几点优化。
-- 1、针对每个GlueHandler解析后生成的Java对象实例做缓存，而不是代码本身做缓存；
-- 2、仅仅在接收到清除缓存的广播时解析生成新的GlueHandler实例对象，避免groovy的频繁解析，减少Class装载频率；
-- 3、周期性的异步刷新类加载器，避免因全局类加载器装载Class过多且不及时卸载导致的PermGen被用满。
 
 
 ## 六、历史版本
