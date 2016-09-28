@@ -42,7 +42,9 @@ shim解释起来也比较难理解，shim直接翻译为"垫"，其实也是有�
 <div class="ui fixed inverted menu">
 	<div class="ui container">
 		<a href="${request.contextPath}/code" class="header item"><img class="logo" src="${request.contextPath}/static/image/logo.png">Glue</a>
-	    <a href="${request.contextPath}/help" class="item">文档</a>
+	    <#--<a href="${request.contextPath}/help" class="item">文档</a>-->
+        <a href="https://my.oschina.net/xuxueli/blog/732499" target="_blank" class="item">文档</a>
+        <a href="https://github.com/xuxueli/xxl-glue" target="_blank" class="item">Github</a>
 	    <#--
 	    <a href="${request.contextPath}/code/demoEditor" class="item" target="_blank" >Demo编辑器</a>
 	  	<div class="ui simple dropdown item">
