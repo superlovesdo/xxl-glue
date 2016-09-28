@@ -36,6 +36,10 @@ XXL-GLUE 是一个分布式环境下的逻辑管理平台, 逻辑的基本单元
 
 ### 二、系统设计
 
+#### 架构图
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/28120739_AEeQ.png "在这里输入图片标题")
+
 ##### Groovy : 用于 Java 虚拟机的一种敏捷的动态语言;
 - 1、以强大的Java为基础；
 - 2、包含Python、Ruby、Smalltalk等语言强带附加功能，例如动态类型转换、闭包和元编程支持；
