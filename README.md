@@ -101,20 +101,29 @@ Groovy简介 : 用于 Java 虚拟机的一种敏捷的动态语言;
 - 2、 遍历Field数组，根据其注解 “@Resource” 和 “@Autowired” 在Spring容器匹配服务（注入规则同Spring默认规则：@Autowired按类型注入；@Resource按照首先名称注入，失败则按照类型注入；）；
 - 3、将匹配到的Spring服务注入到该Field中。
 
-#### 4、缓存
-Glue中缓存的对象是“groovyClassLoader”解析生成的GlueHandler实例。
+#### 4、广播组件
 
-GlueHandler缓存支持设置Timeout时间，单位毫秒，缓存失效时将会实例化加载新的GLueHander实例，Timeout设置为-1时将永不失效。
+![输入图片说明](https://static.oschina.net/uploads/img/201609/28195353_3QpP.png "在这里输入图片标题")
 
 Glue中通过ZK实现了一套广播机制, 采用广播的方式进行触发主动更新。
 
-#### 5、缓存更新（异步 + 覆盖）
-常规缓存更新，通常是通过remove(key)的方式进行缓存清理，然后在下次请求时将会以懒加载的方式进行缓存初始化，但是这样在并发环境中有雪崩的隐患。
+如图所示, 每个GlueHandler在ZK中对应一个node节点, 当需要广播更新时将会将广播消息(消息对象如右图)序列化后赋值给节点。该GlueHandler的接入方项目将会监听到事件通知并及时刷新缓存;
 
-因此，GlueHandler采用 “异步（queue + thread）”+“覆盖”的方式进行GlueHandler更新，步骤如下：
-- 1、在接收到缓存更新的广播消息时，首先会将待更新的GlueHandler的名称push到待更新队列中；
-- 2、异步线程监控待更新队列，获取待更新GlueHandler名称，加载并实例化新GlueHandler实例；
-- 3、将新的GlueHandler实例，覆盖缓存中旧的GlueHandler实例，后续调用将会执行新的业务逻辑。
+
+#### 5、缓存更新策略（异步 + 覆盖）
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/28201225_vF6z.png "在这里输入图片标题")
+
+- 1、Glue中缓存的对象是“groovyClassLoader”解析生成的GlueHandler实例。
+
+- 2、GlueHandler缓存支持设置Timeout时间，单位毫秒，缓存失效时将会实例化加载新的GLueHander实例，Timeout设置为-1时将永不失效。
+
+- 3、常规缓存更新，通常是通过remove(key)的方式进行缓存清理，然后在下次请求时将会以懒加载的方式进行缓存初始化，但是这样在并发环境中有雪崩的隐患。
+
+    为避免缓存雪崩情况，GlueHandler采用 “异步（queue + thread）”+“覆盖”的方式进行GlueHandler更新，步骤如下：
+    - 1、在接收到缓存更新的广播消息时，首先会将待更新的GlueHandler的名称push到待更新队列中；
+    - 2、异步线程监控待更新队列，获取待更新GlueHandler名称，加载并实例化新GlueHandler实例；
+    - 3、将新的GlueHandler实例，覆盖缓存中旧的GlueHandler实例，后续调用将会执行新的业务逻辑。
 
 #### 6、灰度更新
 GlueHandler通过广播的方式进行推送更新，在推送广播消息时支持输入待刷新该GlueHandler的项目名列表，只有匹配到的项目才会对本项目中GlueHandler进行覆盖更新，否则则忽视该条广播消息。
