@@ -2,20 +2,19 @@
 ## 一、简介
 
 #### 1.1 概述
-XXL-GLUE 是一个分布式环境下的逻辑管理平台, 逻辑的基本单元是GlueHandler。
+XXL-GLUE 是一个分布式环境下的逻辑管理平台, 扩展JVM的动态语言支持。
 
-**Tips:** 可以参考 “配置管理服务，如disconf diamond等” 的概念来帮助我们来认识和理解XXL-GLUE, 前者用于维护分布式环境下的配置信息, 推送配置更新; 后者功能更强大, 在拥有前者功能的基础之上, 甚至支持维护Java源代码(以GlueHandler为单位), 支持在线修改、推送更新和实时编译生效等;
+GlueHandler可以方便的嵌入到线上各个业务线中, 从而扩展相应业务模块的动态语言支持。可以节省部分因为项目编译、打包、部署和重启线上机器所带来的时间和人工消耗, 提高开发效率。
 
-概念解释:
-- GlueHandler：即业务中抽象且离散的逻辑单元, 可以方便的嵌入到线上各个业务线的各个业务中。从而扩展部分模块的动态语言特性, 可以节省部分项目编译、打包、部署和重启线上机器等流程消耗, 提高开发效率。本质上是实现统一父接口IGlueHandler的是子类，调用时将会执行其接口中的handle方法并return执行结果数据。
-- XXL-GLUE平台：提供逻辑单元（GlueHandler）推送功能，扩展JVM的动态语言支持。提供Wed IDE支持在线开发GlueHandler，并且实时推送更新。
+**Tips:** 可以参考 “配置管理服务，如disconf diamond等” 的概念来帮助我们来认识和理解XXL-GLUE。前者用于维护分布式环境下的 "配置信息", 并推送配置更新; 后者功能更强大, 支持维护 "Java逻辑代码块(基本单元是GlueHandler)" , 支持 "在线修改、推送更新和实时编译生效" ;
 
 #### 1.2 特性
-- 1、交互：提供Wed IDE，支持在线管理和开发GlueHandler；
-- 2、简单：Glue可以非常方便的嵌入Spring容器，与现有项目集成方便，上手简单；
-- 3、实时：GlueHandler变更时，将会实时推送更新；
-- 4、版本：支持50个历史版本的版本回溯；
-- 5、注入：支持@Resource和@Autowired两种方式注入Spring容器中服务
+- 1、动态(groovy)：托管在平台中的GlueHandler以 "groovy" 的方式进行加载实例化, 扩展JVM的动态语言支持;
+- 2、在线(Wed IDE)：提供WedIDE，支持在线管理和开发GlueHandler；
+- 3、推送更新：当GlueHandler变动时, 将会通过广播组件, 实时推送接入方对应的GlueHandler进行reload更新, 保证GlueHandler中业务逻辑的实时性;
+- 4、兼容Spring：无缝兼容Spring, 支持@Resource和@Autowired两种方式注入Spring容器中服务;
+- 5、版本：支持50个历史版本的版本回溯；
+- 6、调试: 在开发阶段可开启本地模式, 该模式下将会加载本地GlueHandler文件, 支持Debug, 可以方便的进行本地调试;
 
 #### 1.3 下载
 源码地址 (将会在两个git仓库同步发布最新代码)
@@ -40,42 +39,76 @@ XXL-GLUE 是一个分布式环境下的逻辑管理平台, 逻辑的基本单元
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/28120739_AEeQ.png "在这里输入图片标题")
 
-##### Groovy : 用于 Java 虚拟机的一种敏捷的动态语言;
+#### 1、角色组成
+- GlueHandler: 业务中抽象且离散的逻辑单元, 本质上是实现统一父接口的子类, 约定了公共方法以及公共的输入输出。
+- Broadcase: 广播组件, 当GlueHandler更新时, 将会触发广播消息;
+- GLUE管理中心: 管理中心, 提供对GlueHandler的管理功能, 同时提供 WebIDE 支持在线开发GlueHandler, 并借助 "Broadcase" 组件提供逻辑单元"GlueHandler"实时推送功能;
+- GLUE服务: Glue加载RPC服务, 提供GlueHandler对应源码的加载服务;
+- Client: GLUE的接入方, 可以动态的使用托管的GlueHandler, 并享受实时推送功能。避免了逻辑变更带来的一系列编译、打包、部署和重启线上机器等流程;
+
+#### GlueHandler剖析
+
+GlueHandler本质上是实现统一父接口的子类, 约定了公共方法以及公共的输入输出。
+
+其源码维护在数据库表中, 接入方通过GroovyClassLoader加载相应源码并实例化为 "GlueHandler对象", 调用时将会执行父类公共方法。
+
+统一父接口:
+```
+package com.xxl.glue.core.handler;
+import java.util.Map;
+
+/**
+ * default glue iface, it could be use in your biz service
+ * @author xuxueli 2016-1-2 21:31:56
+ */
+public interface GlueHandler {
+	
+	/**
+	 * defaule method
+	 * @param params
+	 * @return
+	 */
+	public Object handle(Map<String, Object> params);
+	
+}
+
+```
+ 
+Groovy简介 : 用于 Java 虚拟机的一种敏捷的动态语言;
 - 1、以强大的Java为基础；
 - 2、包含Python、Ruby、Smalltalk等语言强带附加功能，例如动态类型转换、闭包和元编程支持；
 - 3、一种成熟的面向对象语言，同时可用作纯粹的校验语言；
 - 4、适合与Spring动态语言支持一起使用，因为它专门为JVM设计，充分考虑Java继承；
 - 5、与Java代码互操作很容易；
 
+#### 2、GlueHandler 执行步骤
 
-##### 1、系统模块组成
-- 1、Glue管理中心：负责管理GLUE，提供GLUE创建、删除，代码编辑等常规功能，以及GLUE刷新功能;
-- 2、Glue源码加载服务：GlueHandler源码远程加载服务，Pegion服务；
-- 3、Glue执行器：负载加载和实例化GlueHandler，提供公共API。
+![输入图片说明](https://static.oschina.net/uploads/img/201609/28170939_xiE7.png "在这里输入图片标题")
 
-##### 2、GlueHandler加载步骤
-系统中通过 GlueFactory.glue("Glue名称", "Map格式入参") 这一行代码执行对应的GlueHandler，内部执行逻辑如下；
-- 1、调用 “loadInstance(name)” 方式，从缓存中加载GlueHandler实例，如果缓存中存在该实例则返回，并执行GlueHandler的 “.handle(params)” 方法，完成一次调用；否则进入步骤2；
-- 2、如果缓存中没有GlueHandler实例，则调用 “loadNewInstance(name)” 方法，该方法将会顺序执行以下逻辑：
-    - 2.1 执行加载器 “glueLoader.load(name)”  方法加载GlueHandler源码；
-    - 2.2 执行 “groovyClassLoader.parseClass(codeSource);” 将源码通过Groovy的类加载器解析为Java类对象实例；
-    - 2.3 执行 “injectService(instance)” 方法，在此GlueHandler实例中注入Spring容器中服务；
-    - 2.4 加入缓存，返回该GlueHandler；
+接入方,执行托管在GLUE平台上的一个GlueHandler中的代码逻辑时, 执行步骤如下:
 
-##### 3、Spring服务注入
+- 1、缓存命中: 首先, 在本地缓存中匹配 "GlueHandler实例" , 匹配成功则调用统一公共方法即可; 否则执行步骤2;
+- 2、实例化: RPC方式加载相应GlueHandler对应源码, 并通过 "GroovyClassLoader" 最终实例化为 "GlueHandler实例" ;
+- 3、依赖注入: 执行 "injectService", 反射方式为 "GlueHandler实例" 注入依赖的Spring服务;
+- 4、加入缓存: 将 "GlueHandler实例" 加入本地缓存;
+- 5、注册监听: 注册对该 "GlueHandler" 的广播消息监听;
+- 6、invoke: 执行 "GlueHandler实例" 的公共方法, 返回执行结果;
+- 7、Finish;
+
+#### 3、Spring服务注入
 支持 “Resource.class” 和 “Autowired.class” 两种方式为GlueHandler输入Spring服务，实现逻辑如下：
 - 1、 反射获取GlueHandler的Field数组；
 - 2、 遍历Field数组，根据其注解 “@Resource” 和 “@Autowired” 在Spring容器匹配服务（注入规则同Spring默认规则：@Autowired按类型注入；@Resource按照首先名称注入，失败则按照类型注入；）；
 - 3、将匹配到的Spring服务注入到该Field中。
 
-##### 4、缓存
+#### 4、缓存
 Glue中缓存的对象是“groovyClassLoader”解析生成的GlueHandler实例。
 
 GlueHandler缓存支持设置Timeout时间，单位毫秒，缓存失效时将会实例化加载新的GLueHander实例，Timeout设置为-1时将永不失效。
 
 Glue中通过ZK实现了一套广播机制, 采用广播的方式进行触发主动更新。
 
-##### 5、缓存更新（异步 + 覆盖）
+#### 5、缓存更新（异步 + 覆盖）
 常规缓存更新，通常是通过remove(key)的方式进行缓存清理，然后在下次请求时将会以懒加载的方式进行缓存初始化，但是这样在并发环境中有雪崩的隐患。
 
 因此，GlueHandler采用 “异步（queue + thread）”+“覆盖”的方式进行GlueHandler更新，步骤如下：
@@ -83,17 +116,17 @@ Glue中通过ZK实现了一套广播机制, 采用广播的方式进行触发主
 - 2、异步线程监控待更新队列，获取待更新GlueHandler名称，加载并实例化新GlueHandler实例；
 - 3、将新的GlueHandler实例，覆盖缓存中旧的GlueHandler实例，后续调用将会执行新的业务逻辑。
 
-##### 6、灰度更新
+#### 6、灰度更新
 GlueHandler通过广播的方式进行推送更新，在推送广播消息时支持输入待刷新该GlueHandler的项目名列表，只有匹配到的项目才会对本项目中GlueHandler进行覆盖更新，否则则忽视该条广播消息。
 
-##### 7、版本回溯
+#### 7、版本回溯
 GlueHandler的每次更新都会进行对上个版本的代码进行备份，备份数量支持配置，原则上无上限。
 同时，在Web IDE界面上，可以查看到所有的备份记录，并且可以方便的进行版本回退。
 
-##### 8、预热
+#### 8、预热
 GlueHandler创建时和项目关联起来，这样在项目启动时会主动加载关联到的GlueHandler，避免懒加载引起的并发问题。
 
-##### 9、避免因Permanet Generation空间被占满引起的Full GC
+#### 9、避免因Permanet Generation空间被占满引起的Full GC
 PermanetGeneration中存放的为一些class的信息等，当系统中要加载的类、反射的类和调用的方法较多时，Permanet Generation可能会被占满。
 
 GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC的问题，原因如下：
@@ -111,27 +144,29 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 
 
 ### 三、快速入门
-##### 源码目录介绍
+#### 源码目录介绍
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/28154219_vkTh.png "在这里输入图片标题")
 
 - /db                : 数据库交表脚本位置
 - /xxl-glue-admin    : GLUE管理中心
 - /xxl-glue-core     : 公共依赖
 - /xxl-glue-core-example : 接入XXL-GLUE的Demo项目, 可以参考它来学习如何在项目中接入GLUE
 
-##### 初始化数据库
+#### 初始化数据库
 
 执行数据库建表脚本: /xxl-glue/db/mysql_xxl_glue.sql
 
 
-##### 部署"GLUE管理中心"(xxl-glue-admin)
+#### 部署"GLUE管理中心"(xxl-glue-admin)
 
 - 配置JDBC地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jdbc.properties"
 
-##### 部署"接入XXL-GLUE的Demo项目"(xxl-glue-core-example)
+#### 部署"接入XXL-GLUE的Demo项目"(xxl-glue-core-example)
 
 - 配置JDBC地址: 配置文件地址 "/xxl-glue/xxl-glue-admin/src/main/resources/jdbc.properties"
 
-##### 开发第一个GlueHandler (Hello World) 
+#### 开发第一个GlueHandler (Hello World) 
 
 启动"GLUE管理中心"(xxl-glue-admin),登录系统;
 
@@ -140,13 +175,13 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 每个GlueHandler必须是实现统一父接口GlueHandler的子类；
 
 	
-##### 测试
+#### 测试
 
 启动"接入XXL-GLUE的Demo项目"(xxl-glue-core-example),访问以下链接测试
 
     http://localhost:8080/xxl-glue-core-example/code/GLUE名称
     
-##### 如何Debug测试GlueHandler
+#### 如何Debug测试GlueHandler
 
 源码加载器配置,见项目"xxl-glue-core-example"的"applicationcontext-glue.xml"配置中"GlueFactory"实例的"glueLoader"属性;
 
@@ -156,7 +191,7 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
     - 会循环遍历该目录下子目录文件进行匹配,因此文件可以在该目录下自由存放;
     - FileGlueLoader方式使用XXL-GLUE,支持GlueHandler的debug断点;
     
-##### 业务中如何执行自己的GlueHandler
+#### 业务中如何执行自己的GlueHandler
 
 执行以下一行代码即可    
 ```
@@ -165,7 +200,7 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 
 
 ### 四、GlueHandler的三种经典使用场景, 
-##### 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
+#### 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
 ```
 package com.xxl.groovy.example.service.impl;
 
@@ -199,7 +234,7 @@ public class DemoHandlerAImpl implements GlueHandler {
 }
 ```
 
-##### 场景B：托管 “静态方法”，可以将配置解析逻辑一并托管，只关注返回结果即可
+#### 场景B：托管 “静态方法”，可以将配置解析逻辑一并托管，只关注返回结果即可
 ```
 package com.xxl.groovy.example.service.impl;
 
@@ -245,7 +280,7 @@ public class DemoHandlerBImpl implements GlueHandler {
 }
 ```
 
-##### 场景C：托管 “抽象且离散的逻辑单元”，可以灵活组装接口和服务（伪服务），作为公共模块
+#### 场景C：托管 “抽象且离散的逻辑单元”，可以灵活组装接口和服务（伪服务），作为公共模块
 ```
 package com.xxl.groovy.example.service.impl;
 
@@ -293,27 +328,27 @@ public class DemoHandlerCImpl implements GlueHandler {
 
 
 ### 五、操作指南
-##### 第一步：登陆GLUE
+#### 第一步：登陆GLUE
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14200804_Yuox.png "在这里输入图片标题")
 
-##### 第二步：新建GLUE项
+#### 第二步：新建GLUE项
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14200827_kkQX.png "在这里输入图片标题")
 
-##### 第三步：GLUE列表
+#### 第三步：GLUE列表
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14200852_Q3Mj.png "在这里输入图片标题")
 
-##### 第四步：开发GLUE代码
+#### 第四步：开发GLUE代码
 点击右侧 “编辑” 按钮，进入GLUE开发的Wed IDE界面。默认已经初始化Hello World示例代码，如需开发业务代码，只需要在handle方法中开发即可。
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14200932_HAsd.png "在这里输入图片标题")
 
-##### 第五步：一句话执行GlueHandler
+#### 第五步：一句话执行GlueHandler
 首先确定项目中已经接入GLUE（参考上文“三步接入GLUE”，接入非常方便）；
 然后执行一行代码即可；
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14200956_vxNj.png "在这里输入图片标题")
 
-##### 第六步：推送更新
+#### 第六步：推送更新
 GlueHandler在第一次加载之后将会缓存在内存中，点击右侧 “清楚缓存” 按钮可以推送更新，填写AppName将会精确定位单个项目进行缓存更新，如果为空则全站广播。
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/14201023_Y3Be.png "在这里输入图片标题")
@@ -321,15 +356,18 @@ GlueHandler在第一次加载之后将会缓存在内存中，点击右侧 “�
 
 ## 六、历史版本
 #### 版本1.0.0
-- 1、交互：提供Wed IDE，支持在线管理和开发GlueHandler；
-- 2、简单：Glue可以非常方便的嵌入Spring容器，与现有项目集成方便，上手简单；
-- 3、实时：GlueHandler变更时，将会实时推送更新；
-- 4、版本：支持50个历史版本的版本回溯；
-- 5、注入：支持@Resource和@Autowired两种方式注入Spring容器中服务
+- 1、动态(groovy)：托管在平台中的GlueHandler以 "groovy" 的方式进行加载实例化, 扩展JVM的动态语言支持;
+- 2、在线(Wed IDE)：提供WedIDE，支持在线管理和开发GlueHandler；
+- 3、推送更新：当GlueHandler变动时, 将会通过广播组件, 实时推送接入方对应的GlueHandler进行reload更新, 保证GlueHandler中业务逻辑的实时性;
+- 4、兼容Spring：无缝兼容Spring, 支持@Resource和@Autowired两种方式注入Spring容器中服务;
+- 5、版本：支持50个历史版本的版本回溯；
 
 #### 版本1.1.0
-- 1、重要重构;
-- 2、交互优化;
+- 1、系统重构;
+- 2、调试: 在开发阶段可开启本地模式, 该模式下将会加载本地GlueHandler文件, 支持Debug, 可以方便的进行本地调试;
+
+#### 版本1.2.0
+- 1、广播组件由Activemq改为自主实现的基于ZK的广播组件, 减少系统第三方依赖;
 
 ## 七、其他
 
