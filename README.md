@@ -46,7 +46,7 @@ GlueHandler可以方便的嵌入到线上各个业务线中, 从而扩展相应�
 - GLUE服务: Glue加载RPC服务, 提供GlueHandler对应源码的加载服务;
 - Client: GLUE的接入方, 可以动态的使用托管的GlueHandler, 并享受实时推送功能。避免了逻辑变更带来的一系列编译、打包、部署和重启线上机器等流程;
 
-#### GlueHandler剖析
+#### GlueHandler 剖析
 
 GlueHandler本质上是实现统一父接口的子类, 约定了公共方法以及公共的输入输出。
 
@@ -141,6 +141,9 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 - 1、针对每个GlueHandler解析后生成的Java对象实例做缓存，而不是代码本身做缓存；
 - 2、仅仅在接收到清除缓存的广播时解析生成新的GlueHandler实例对象，避免groovy的频繁解析，减少Class装载频率；
 - 3、周期性的异步刷新类加载器，避免因全局类加载器装载Class过多且不及时卸载导致的PermGen被用满。
+
+#### 10、调试      
+由于GlueHandler源码存储在云端, 调试不便。因此系统提供了 "com.xxl.glue.core.loader.impl.FileGlueLoader" ,用于开启 "本地模式", 该模式系统将会从项目资源目录的子目录 "config/glue" 中加载源码, 同时支持debug, 可以方便的进行业务代码调试。
 
 
 ### 三、快速入门
