@@ -201,6 +201,11 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 	Object result = GlueFactory.glue("glue名称", "glue入参，Map类型");
 ```
 
+#### 如何广播刷新GlueHandler
+
+进入GLUE管理中心, 在GlueHandler的右侧, 点击 "清除缓存" 按钮将会弹框确认是否刷新GLUE。
+
+该弹框中有一个输入框 "Witch APP", 输入接入方项目的AppName, 即可精确的灰度刷新该项目中的相应GlueHandler。如果不输入, 则广播刷新所有项目中响应的GlueHandler。
 
 ### 四、GlueHandler的三种经典使用场景, 
 #### 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
