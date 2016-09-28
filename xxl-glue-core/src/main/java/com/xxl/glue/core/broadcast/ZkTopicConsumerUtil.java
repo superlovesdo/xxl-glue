@@ -25,64 +25,68 @@ public class ZkTopicConsumerUtil {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 
-					// init zookeeper
-					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
-					countDownLatch.countDown();
-					countDownLatch.await();*/
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 5000, new Watcher() {
-						@Override
-						public void process(WatchedEvent event) {
+                    try {
+                        // init zookeeper
+                        /*final CountDownLatch countDownLatch = new CountDownLatch(1);
+                        countDownLatch.countDown();
+                        countDownLatch.await();*/
+                        zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
+                            @Override
+                            public void process(WatchedEvent event) {
 
-							try {
-								// session expire, close old and create new
-								if (event.getState() == Event.KeeperState.Expired) {
-									zooKeeper.close();
-									zooKeeper = null;
-									getInstance();
-								}
-							} catch (InterruptedException e) {
-								logger.error("", e);
-							}
+                                try {
+                                    // session expire, close old and create new
+                                    if (event.getState() == Event.KeeperState.Expired) {
+                                        zooKeeper.close();
+                                        zooKeeper = null;
+                                        getInstance();
+                                    }
+                                } catch (InterruptedException e) {
+                                    logger.error("", e);
+                                }
 
-							// refresh service address
-							if (event.getType() == Event.EventType.NodeDataChanged){
-								String path = event.getPath();
-								if (path!=null && path.startsWith(Environment.GLUE_TOPIC_PATH)) {
-									// add one-time watch
-									try {
-										zooKeeper.exists(path, true);
-									} catch (Exception e) {
-										logger.error("", e);
-									}
-									// broadcase message
-									String name = path.substring(Environment.GLUE_TOPIC_PATH.length()+1, path.length());
-									String data = null;
-									try {
-										byte[] resultData = zooKeeper.getData(path, true, null);
-										if (resultData != null) {
-											data = new String(resultData);
-										}
+                                // refresh service address
+                                if (event.getType() == Event.EventType.NodeDataChanged){
+                                    String path = event.getPath();
+                                    if (path!=null && path.startsWith(Environment.GLUE_TOPIC_PATH)) {
+                                        // add one-time watch
+                                        try {
+                                            zooKeeper.exists(path, true);
+                                        } catch (Exception e) {
+                                            logger.error("", e);
+                                        }
+                                        // broadcase message
+                                        String name = path.substring(Environment.GLUE_TOPIC_PATH.length()+1, path.length());
+                                        String data = null;
+                                        try {
+                                            byte[] resultData = zooKeeper.getData(path, true, null);
+                                            if (resultData != null) {
+                                                data = new String(resultData);
+                                            }
 
-										// clean cache
-										GlueMessage glueMessage = JacksonUtil.readValue(data, GlueMessage.class);
-										GlueFactory.clearCache(glueMessage);
-									} catch (Exception e) {
-										logger.error("", e);
-									}
+                                            // clean cache
+                                            GlueMessage glueMessage = JacksonUtil.readValue(data, GlueMessage.class);
+                                            GlueFactory.clearCache(glueMessage);
+                                        } catch (Exception e) {
+                                            logger.error("", e);
+                                        }
 
-								}
-							}
+                                    }
+                                }
 
-						}
-					});
+                            }
+                        });
 
-					// init glue tipic path
-					Stat stat =zooKeeper.exists(Environment.GLUE_TOPIC_PATH, false);
-					if (stat == null) {
-						zooKeeper.create(Environment.GLUE_TOPIC_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-					}
+                        // init glue tipic path
+                        Stat stat =zooKeeper.exists(Environment.GLUE_TOPIC_PATH, false);
+                        if (stat == null) {
+                            zooKeeper.create(Environment.GLUE_TOPIC_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                        }
 
-					logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
+                        logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
+                    } finally {
+                        INSTANCE_INIT_LOCK.unlock();
+                    }
 				}
 			} catch (InterruptedException e) {
 				logger.error("", e);
