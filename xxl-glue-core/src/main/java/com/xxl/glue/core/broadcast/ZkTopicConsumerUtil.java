@@ -90,6 +90,8 @@ public class ZkTopicConsumerUtil {
 				logger.error("", e);
 			} catch (KeeperException e) {
 				logger.error("", e);
+			} finally {
+				INSTANCE_INIT_LOCK.unlock();
 			}
 		}
 		if (zooKeeper == null) {

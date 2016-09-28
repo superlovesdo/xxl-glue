@@ -179,8 +179,6 @@ public class GlueFactory implements ApplicationContextAware {
 			}
 		}
 
-		logger.info(">>>>>>>>>>>glueInstanceMap loadInstance=" + glueInstanceMap);
-
 		return instance;
 	}
 	
