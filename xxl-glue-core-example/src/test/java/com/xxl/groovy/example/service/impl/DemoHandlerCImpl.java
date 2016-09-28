@@ -1,12 +1,12 @@
 package com.xxl.groovy.example.service.impl;
 
-import java.util.Map;
-
 import com.xxl.glue.core.handler.GlueHandler;
 
+import java.util.Map;
+
 /**
- * 场景B：托管 “抽象且离散的逻辑单元”
- * 优点：...；逻辑封装（伪服务）；
+ * 场景B：托管 “动态服务”
+ * 优点：可以灵活组装接口和服务, 扩展服务的动态特性，作为公共模块。
  * @author xuxueli 2016-4-14 16:07:03
  */
 public class DemoHandlerCImpl implements GlueHandler {

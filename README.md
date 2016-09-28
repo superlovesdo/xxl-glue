@@ -288,7 +288,7 @@ public class DemoHandlerBImpl implements GlueHandler {
 }
 ```
 
-#### 场景C：托管 “抽象且离散的逻辑单元”，可以灵活组装接口和服务（伪服务），作为公共模块
+#### 场景C：托管 “动态服务”，可以灵活组装接口和服务, 扩展服务的动态特性，作为公共模块。
 ```
 package com.xxl.groovy.example.service.impl;
 
