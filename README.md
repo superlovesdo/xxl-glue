@@ -169,6 +169,16 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 
 执行数据库建表脚本: /xxl-glue/db/mysql_xxl_glue.sql
 
+#### 配置“Zookeeper地址列表”
+
+    - 配置文件位置: /data/webapps/xxl-conf.properties     (使用硬盘绝对路径, 好处是: 该机器上所有项目可共享该Zookeeper地址配置)
+    - 配置文件内容:
+    ```
+    // 支持zookeeper地址集群配置, 如有多个地址用逗号分隔
+    zkserver=127.0.0.1:2181
+    ```
+    - 配置文件作用: 配置Zookeeper的地址信息
+
 
 #### 部署"GLUE管理中心"(xxl-glue-admin)
 
