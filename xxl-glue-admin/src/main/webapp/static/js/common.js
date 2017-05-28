@@ -1,9 +1,7 @@
-'use strict';
-define(['jquery', 'semantic-comalert', 'pace'], function($, ComAlert, pace) {
-	
+$(function () {
 	// 闭包，自由变量
 	$('.logoutBtn').on('click', function(){
-		ComAlert.confirm("您确定要注销登陆吗?", 
+		ComAlert.confirm("您确定要注销登陆吗?",
 			function(){
 				$.ajax({
 					type : 'POST',
@@ -22,8 +20,5 @@ define(['jquery', 'semantic-comalert', 'pace'], function($, ComAlert, pace) {
 			}
 		);
 	});
-	
-	pace.start();
-	
-    return '200';
-});
+
+})

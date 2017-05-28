@@ -26,7 +26,7 @@ public class CodeController {
 	@RequestMapping
 	@PermessionLimit
 	public String index(){
-		return "code/index";
+		return "code/code.list";
 	}
 	
 	@RequestMapping("/pageList")

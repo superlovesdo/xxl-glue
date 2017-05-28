@@ -91,10 +91,6 @@
 	<@netCommon.commonFooter />
 
 <@netCommon.commonScript />
-<script>
-require(['common'], function(status) {
-	console.log(status);
-});
-</script>
+
 </body>
 </html>

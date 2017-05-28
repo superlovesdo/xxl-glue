@@ -29,7 +29,7 @@ public class IndexController {
 		if (loginUser == null) {
 			return "redirect:/toLogin";
 		}
-		return "redirect:/code/";
+		return "redirect:/code";
 	}
 
 	@RequestMapping("/toLogin")

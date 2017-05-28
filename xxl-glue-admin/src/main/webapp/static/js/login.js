@@ -1,34 +1,33 @@
-'use strict';	// 开启严格模式以后，一些js糟糕的特性都会被禁用:检查对象中的重复键/未声明变量/重复的参数...
-define(['jquery', 'semantic-comalert', 'jquery.validate', 'semantic', 'semantic-ui-form', 'semantic-ui-transition', 'common'], function($, ComAlert) {
-    //alert($().jquery);
-	
-    $('.ui.form').form({
+$(function () {
+
+
+	$('#loginForm').form({
 		fields: {
 			userName: {
 				identifier  : 'email',
-              	rules: [
-                	{
-                  		type   : 'empty',
-                  		prompt : '请输入用户名'
-                	},
-                	{
+				rules: [
+					{
+						type   : 'empty',
+						prompt : '请输入用户名'
+					},
+					{
 						type   : 'length[4]',		// type   : 'email',
-                  		prompt : '请您输入长度超过4位的用户名'
-                	}
-              	]
-            },
-            password: {
-              	identifier  : 'password',
-              	rules: [
-                	{
-                  		type   : 'empty',
-                  		prompt : '请输入密码'
-                	},
-                	{
-                  		type   : 'length[4]',
-                  		prompt : '请您输入长度超过4位的密码'
-                	}
-              	]
+						prompt : '请您输入长度超过4位的用户名'
+					}
+				]
+			},
+			password: {
+				identifier  : 'password',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : '请输入密码'
+					},
+					{
+						type   : 'length[4]',
+						prompt : '请您输入长度超过4位的密码'
+					}
+				]
 			}
 		},
 		onSuccess: function(){
@@ -50,6 +49,5 @@ define(['jquery', 'semantic-comalert', 'jquery.validate', 'semantic', 'semantic-
 			return false;	// 避免默认return true表单提交
 		}
 	});
-	
-    return '200';	// return则支持返回this引用，否则不支持
+
 });

@@ -57,11 +57,8 @@
 	</div>
 
 <@netCommon.commonScript />
-<script>
-// 模块引入
-require(['login'], function(status) {
-	console.log(status);	// callback
-});
+<script src="${request.contextPath}/static/js/login.js" ></script>
+
 </script>
 </body>
 </html>

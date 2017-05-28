@@ -19,7 +19,7 @@ import java.math.BigInteger;
 @Service
 public class XxlGlueUserServiceImpl implements IXxlGLueUserService {
 
-    public static final String LOGIN_IDENTITY_KEY = "XXL_API_LOGIN_IDENTITY";
+    public static final String LOGIN_IDENTITY_KEY = "XXL_GLUE_LOGIN_IDENTITY";
     private static String makeToken (User xxlApiUser) {
         String tokenStr = xxlApiUser.getUserName() + "_" + xxlApiUser.getPassword() + "_" + xxlApiUser.getRole();
         String token = new BigInteger(1, tokenStr.getBytes()).toString(16);
