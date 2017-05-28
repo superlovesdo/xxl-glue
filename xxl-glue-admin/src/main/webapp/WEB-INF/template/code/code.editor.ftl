@@ -62,7 +62,7 @@
     </div>
 </div>
 
-
+<@netCommon.commonScript />
 
 <#--
 1、避免阻塞，提高了 js 的加载性能；
@@ -76,7 +76,6 @@ shim解释起来也比较难理解，shim直接翻译为"垫"，其实也是有�
 -->
 <script src="${request.contextPath}/static/plugins/requirejs/requirejs.2.1.22.min.js" data-main="${request.contextPath}/static/js/requirejs.config" ></script>
 <script src="${request.contextPath}/static/js/requirejs.config.js" ></script> <!-- 必须手动引用该main入口函数，否则10%几率应为引用地址错误导致部分引用404，费解 -->
-<script> var base_url = '${request.contextPath}/'; </script>
 
 <script>
 <#if !codeInfo?exists>
@@ -88,7 +87,7 @@ shim解释起来也比较难理解，shim直接翻译为"垫"，其实也是有�
 var codeInfo_id = '${codeInfo.id}';
 
 // 加载js
-require(['code.editor']);
+require(['requirejs.code.editor']);
 </script>
 
 </body>

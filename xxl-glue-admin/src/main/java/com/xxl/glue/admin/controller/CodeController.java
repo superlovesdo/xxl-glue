@@ -79,9 +79,9 @@ public class CodeController {
 		return codeService.clearCache(id, appNames);
 	}
 	
-	/*@RequestMapping("/demoEditor")
+	@RequestMapping("/demoEditor")
 	@PermessionLimit
 	public String demoEditor(HttpServletRequest request){
 		return "code/demo.editor";
-	}*/
+	}
 }
