@@ -4,16 +4,16 @@ define(['jquery', 'semantic-comalert', 'jquery.validate', 'semantic', 'semantic-
 	
     $('.ui.form').form({
 		fields: {
-			email: {
+			userName: {
 				identifier  : 'email',
               	rules: [
                 	{
                   		type   : 'empty',
-                  		prompt : '请输入邮箱'
+                  		prompt : '请输入用户名'
                 	},
                 	{
-                  		type   : 'email',
-                  		prompt : '请您输入正确的邮箱'
+						type   : 'length[4]',		// type   : 'email',
+                  		prompt : '请您输入长度超过4位的用户名'
                 	}
               	]
             },
@@ -25,8 +25,8 @@ define(['jquery', 'semantic-comalert', 'jquery.validate', 'semantic', 'semantic-
                   		prompt : '请输入密码'
                 	},
                 	{
-                  		type   : 'length[6]',
-                  		prompt : '请您输入长度超过6位的密码'
+                  		type   : 'length[4]',
+                  		prompt : '请您输入长度超过4位的密码'
                 	}
               	]
 			}

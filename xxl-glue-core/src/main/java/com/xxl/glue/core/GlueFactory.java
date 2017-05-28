@@ -242,8 +242,8 @@ public class GlueFactory implements ApplicationContextAware {
 	public static void clearCache(GlueMessage glueMessage){
 		// check if match appName
 		boolean isMatchAppName = true;
-		if (glueMessage.getAppnames()!=null && glueMessage.getAppnames().size()>0) {
-			if (glueMessage.getAppnames().contains(GlueFactory.glueFactory.appName)) {
+		if (glueMessage.getAppNames()!=null && glueMessage.getAppNames().size()>0) {
+			if (glueMessage.getAppNames().contains(GlueFactory.glueFactory.appName)) {
 				isMatchAppName = true;
 			} else {
 				isMatchAppName = false;
@@ -251,14 +251,14 @@ public class GlueFactory implements ApplicationContextAware {
 		} else {
 			isMatchAppName = true;
 		}
-		logger.info(">>>>>>>>>>> xxl-glue, receive glue message, glue:{}, isMatch:{}", glueMessage.getName(), isMatchAppName);
+		logger.info(">>>>>>>>>>> xxl-glue, receive glue message, glueKey:{}, isMatchAppName:{}", glueMessage.getGlueKey(), isMatchAppName);
 
 		if (isMatchAppName) {
 			if (glueMessage.getType() == GlueMessageType.CLEAR_CACHE) {
-				GlueFactory.freshCacheQuene.add(glueMessage.getName());
+				GlueFactory.freshCacheQuene.add(glueMessage.getGlueKey());
 			} else if (glueMessage.getType() == GlueMessageType.DELETE) {
-				glueInstanceMap.remove(glueMessage.getName());
-				glueCacheMap.remove(glueMessage.getName());
+				glueInstanceMap.remove(glueMessage.getGlueKey());
+				glueCacheMap.remove(glueMessage.getGlueKey());
 			}
 		}
 	}

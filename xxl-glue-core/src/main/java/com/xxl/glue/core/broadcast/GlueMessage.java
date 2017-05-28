@@ -9,34 +9,34 @@ import java.util.Set;
 public class GlueMessage {
 	
 	/**
-	 * glue name
+	 * glue key (group_name)
 	 */
-	public String name;
+	public String glueKey;
 	
 	/**
 	 * appnames that the glue apply to
 	 */
-	public Set<String> appnames;
+	public Set<String> appNames;
 	
 	/**
 	 * type : 0-sync, 1-delete
 	 */
 	public GlueMessageType type;
 
-	public String getName() {
-		return name;
+	public String getGlueKey() {
+		return glueKey;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setGlueKey(String glueKey) {
+		this.glueKey = glueKey;
 	}
 
-	public Set<String> getAppnames() {
-		return appnames;
+	public Set<String> getAppNames() {
+		return appNames;
 	}
 
-	public void setAppnames(Set<String> appnames) {
-		this.appnames = appnames;
+	public void setAppNames(Set<String> appNames) {
+		this.appNames = appNames;
 	}
 
 	public GlueMessageType getType() {

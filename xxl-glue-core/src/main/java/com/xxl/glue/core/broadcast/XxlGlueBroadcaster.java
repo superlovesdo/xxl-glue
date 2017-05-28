@@ -1,8 +1,11 @@
 package com.xxl.glue.core.broadcast;
 
 import com.xxl.glue.core.GlueFactory;
+import com.xxl.glue.core.broadcast.zk.XxlZkBroadcastWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /**
  * xxl-glue broadcast
@@ -30,15 +33,21 @@ public class XxlGlueBroadcaster extends XxlZkBroadcastWatcher {
 
 	/**
 	 * procuce msg
-	 *
-	 * @param glueMessage
+	 * @param glueKey
+	 * @param type
+	 * @param appNames
 	 * @return
 	 */
-	public boolean procuceMsg(GlueMessage glueMessage) {
-		String topic = GLUE_BROADCAST + "/" + glueMessage.getName();
+	public boolean procuceMsg(String glueKey, GlueMessage.GlueMessageType type, Set<String> appNames) {
+		String topicPath = GLUE_BROADCAST + "/" + glueKey;
 
-		String data = JacksonUtil.writeValueAsString(glueMessage);
-		return super.produce(topic, data);
+		GlueMessage message = new GlueMessage();
+		message.setGlueKey(glueKey);
+		message.setAppNames(appNames);
+		message.setType(type);
+		String data = JacksonUtil.writeValueAsString(message);
+
+		return super.produce(topicPath, data);
 	}
 
 	/**

@@ -26,7 +26,7 @@ public class WebExceptionResolver implements HandlerExceptionResolver {
 		ModelAndView mv = new ModelAndView();
 		
 		// 异常封装
-		ReturnT<String> result = new ReturnT<String>();
+		ReturnT<String> result = new ReturnT<String>(ReturnT.FAIL_CODE, null);
 		if (ex instanceof WebException) {
 			result.setCode(((WebException) ex).getCode());
 			result.setMsg(((WebException) ex).getMsg());

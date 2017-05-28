@@ -51,22 +51,8 @@ public class CodeServiceImpl implements ICodeService {
 		}
 		codeLogDao.delete(codeInfo.getName());
 
-		// save old (backup)
-		/*try {
-			CodeLog codeLog = new CodeLog();
-			BeanUtils.copyProperties(codeLog, codeInfo);
-			codeLog.setRemark(codeLog.getRemark() + "[backup for 手动删除]");
-			codeLogDao.save(codeLog);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-
 		// broadcast (pub)
-		GlueMessage message = new GlueMessage();
-		message.setName(codeInfo.getName());
-		message.setType(GlueMessageType.DELETE);
-		message.setAppnames(null);
-		XxlGlueBroadcaster.getInstance().procuceMsg(message);
+		XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), GlueMessageType.DELETE, null);
 
 		return ReturnT.SUCCESS;
 	}
@@ -152,12 +138,8 @@ public class CodeServiceImpl implements ICodeService {
 			}
 		}
 
-		// broadcast
-		GlueMessage message = new GlueMessage();
-		message.setName(codeInfo.getName());
-		message.setType(GlueMessageType.CLEAR_CACHE);
-		message.setAppnames(appList);
-		XxlGlueBroadcaster.getInstance().procuceMsg(message);
+		// broadcast (pub)
+		XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), GlueMessageType.CLEAR_CACHE, appList);
 
 		return ReturnT.SUCCESS;
 	}

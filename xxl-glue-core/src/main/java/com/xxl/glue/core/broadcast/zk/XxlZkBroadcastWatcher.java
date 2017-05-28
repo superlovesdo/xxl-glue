@@ -1,4 +1,4 @@
-package com.xxl.glue.core.broadcast;
+package com.xxl.glue.core.broadcast.zk;
 
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;

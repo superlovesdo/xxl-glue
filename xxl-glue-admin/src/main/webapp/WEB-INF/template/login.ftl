@@ -37,7 +37,7 @@
 					<div class="field">
 			          	<div class="ui left icon input">
 			            	<i class="user icon"></i>
-			            	<input type="text" name="email" placeholder="请输入邮箱地址" value="admin@qq.com" >
+			            	<input type="text" name="userName" placeholder="请输入用户名" value="admin" >
 			          	</div>
 					</div>
 			        <div class="field">
