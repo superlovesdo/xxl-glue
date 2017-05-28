@@ -3,7 +3,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="CodeInfoMapper">
 	
-	<resultMap id="CodeInfo" type="com.xxl.admin.core.model.CodeInfo" >
+	<resultMap id="CodeInfo" type="com.xxl.glue.admin.core.model.CodeInfo" >
 		<result column="id" property="id" />
 	    <result column="name" property="name" />
 	    <result column="about" property="about" />
@@ -50,7 +50,7 @@
 		where id = #{id}
 	</delete>
 	
-	<insert id="save" parameterType="com.xxl.admin.core.model.CodeInfo" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.glue.admin.core.model.CodeInfo" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_glue_code_info (
 			name,
 			about,
@@ -71,7 +71,7 @@
 		</selectKey> 
 	</insert>
 	
-	<update id="update" parameterType="com.xxl.admin.core.model.CodeInfo">
+	<update id="update" parameterType="com.xxl.glue.admin.core.model.CodeInfo">
 		update xxl_glue_code_info
 		set source = #{source},
 			remark = #{remark},

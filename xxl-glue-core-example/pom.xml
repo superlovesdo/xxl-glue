@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>com.xxl</groupId>
 		<artifactId>xxl-glue</artifactId>
-		<version>1.2.0</version>
+		<version>1.3.0</version>
 	</parent>
 	<artifactId>xxl-glue-core-example</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
 		<spring.version>3.2.14.RELEASE</spring.version>
-		<xxl-glue-core.version>1.2.0</xxl-glue-core.version>
+		<xxl-glue-core.version>1.3.0</xxl-glue-core.version>
 	</properties>
 
 	<dependencies>

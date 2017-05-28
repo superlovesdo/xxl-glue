@@ -2,7 +2,7 @@ package com.xxl.glue.core;
 
 import com.xxl.glue.core.broadcast.GlueMessage;
 import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
-import com.xxl.glue.core.broadcast.ZkTopicConsumerUtil;
+import com.xxl.glue.core.broadcast.XxlGlueBroadcaster;
 import com.xxl.glue.core.handler.GlueHandler;
 import com.xxl.glue.core.loader.GlueLoader;
 import com.xxl.glue.core.loader.impl.FileGlueLoader;
@@ -142,7 +142,7 @@ public class GlueFactory implements ApplicationContextAware {
 						logger.info(">>>>>>>>>>>> xxl-glue, loadNewInstance success, name:{}", name);
 
                         // watch topic on zk
-                        ZkTopicConsumerUtil.watchTopic(name);
+						XxlGlueBroadcaster.getInstance().watchMsg(name);
 
 						return (GlueHandler) instance;
 					} else {
