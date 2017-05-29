@@ -11,7 +11,14 @@
 		<!-- GLUE示例缓存失效时间，单位毫秒 -->
 		<property name="cacheTimeout" value="300000" />
 		<property name="appName" value="xxl-glue-core-exapmle" />
-		<property name="glueLoader" ref="glueLoader" />
+		<property name="glueLoader" >
+			<!-- DB源码加载器，可加载维护在管理中心的GLUE源码。依赖jdbc连接，推荐借鉴内部逻辑，抽象成远程RPC服务，取消jdbc依赖。 -->
+			<bean class="com.xxl.glue.core.loader.impl.DBGlueLoader" >
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+			<!-- File源码加载器，只可以加载本地资源路径 "resources/config/glue" 下的GLUE脚本源码。不依赖jdbc，逻辑修改时修改或覆盖原file文件即可。 -->
+			<!--<bean class="com.xxl.glue.core.loader.impl.FileGlueLoader" />-->
+		</property>
 	</bean>
 
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -31,10 +38,7 @@
 		<constructor-arg index="0" value="${xxl.glue.zkserver}" />
 	</bean>
 
-	<!-- ********************** 配置03：GLUE源码加载器，负责加载源码。系统提供两种方式FileGlueLoader和DBGlueLoader，可选择其中一个。推荐将其封装成RPC服务，可移除下方jdbc依赖。【必须，或者替换】 ********************** -->
-
-	<!-- glueLoader -->
-	<bean id="glueLoader" class="com.xxl.glue.example.glueloader.DBGlueLoader" />
+	<!-- ********************** 配置03：GLUE源码加载jdbc，【使用DBGlueLoader时，必须】 ********************** -->
 
 	<!-- DataSource  -->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">
@@ -51,14 +55,5 @@
 		<property name="preferredTestQuery" value="SELECT 1" />
 	</bean>
 
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="mapperLocations" value="classpath*:mybatis-mapper/*.xml"/>
-	</bean>
-
-	<!-- SqlSessionTemplate -->
-	<bean id="sqlSessionTemplate"  class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
-		<constructor-arg index="0" ref="sqlSessionFactory" />
-	</bean>
 
 </beans>

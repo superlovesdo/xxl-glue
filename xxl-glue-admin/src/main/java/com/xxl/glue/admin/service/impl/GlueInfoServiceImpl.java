@@ -101,9 +101,9 @@ public class GlueInfoServiceImpl implements IGlueInfoService {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, "更新失败，GLUE记录不存在");
 		}
 
-		// update
+		// update base info
 		oldCodeInfo.setAbout(codeInfo.getAbout());
-		int ret = glueInfoDao.update(codeInfo);
+		int ret = glueInfoDao.update(oldCodeInfo);
 
 		return ret>0?ReturnT.SUCCESS:ReturnT.FAIL;
 	}
@@ -147,7 +147,7 @@ public class GlueInfoServiceImpl implements IGlueInfoService {
 			return new ReturnT<String>(500, "“备注”不可为空");
 		}
 
-		// update glue
+		// update glue source
 		codeInfo_old.setSource(codeLog.getSource());
 		int ret = glueInfoDao.update(codeInfo_old);
 		if (ret < 1) {
