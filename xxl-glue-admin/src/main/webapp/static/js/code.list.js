@@ -1,4 +1,10 @@
 $(function () {
+
+	// dropdown
+	$('.ui.dropdown')
+		.dropdown()
+	;
+
 	// init date tables
 	var codeTable = $("#code_list").dataTable({
 		"deferRender": true,
@@ -18,7 +24,7 @@ $(function () {
 		"ordering": true,
 		//"scrollX": true,  // X轴滚动条，强制性固定长度
 		"columns": [
-			{ "data": 'id', "bSortable": false, "visible" : true},
+			{ "data": 'id', "bSortable": false, "visible" : false},
 			{ "data": 'name', "bSortable": false},
 			{ "data": 'source', "bSortable": false, "visible" : false},
 			{ "data": 'about', "bSortable": false},
@@ -42,6 +48,7 @@ $(function () {
 			{
 				"targets": 6,
 				"data": "id",
+				"align":"right",
 				"render": function ( data, type, row ) {
 					var glueUrl = base_url + "code/codeSourceEditor?id=" + row.id;
 

@@ -20,26 +20,46 @@
 	<!-- code搜索框 -->
 	<div class="ui column stackable grid" style="padding: 1em;margin-top: 50px;">
 	  	<div class="column">
-			<div class="ui action left icon input">
-		      	<i class="search icon"></i>
-		      	<input type="text" placeholder="请输入codeName..." id="codeName" >
-		      	<div class="ui default button" id="searchBtn" >Search</div>
-		    </div>
-	      	<button class="ui teal button" id="addBtn">新增</button>
+
+            <div class="ui labeled input">
+                <div class="ui label">分组</div>
+                <select class="ui  selection dropdown" id="bizName" >
+                    <option value="AL">Alabama</option>
+                    <option value="AK">Alaska</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="AR">Arkansas</option>
+                    <option value="CA">California</option>
+                    <!-- Saving your scroll sanity !-->
+                    <option value="OH">Ohio</option>
+                    <option value="OK">Oklahoma</option>
+                    <option value="OR">Oregon</option>
+                </select>
+            </div>
+
+            <div class="ui labeled input">
+                <div class="ui label">GLUE</div>
+                <input type="text" placeholder="请输入codeName..." id="codeName" >
+            </div>
+
+            <div class="ui labeled input">
+                <div class="ui default button" id="searchBtn" >搜索</div>
+                <button class="ui teal button" id="addBtn">新增</button>
+            </div>
+
 	    </div>
     </div>
     
 	<!-- code列表 -->
 	<div class="column" style="padding: 1em;margin-top: 5px;">
-		<table class="ui right aligned table" id="code_list" >
+		<table class="ui left aligned table"  id="code_list" >
 			<thead>
-		        <th class="left aligned">id</th>
-		        <th>Glue名称</th>
+		        <th>id</th>
+		        <th>GlueKey</th>		<#-- 分组，设置Key；GlueKey，前缀加上分组Key -->
 		        <th>源码</th>
 		        <th>简介</th>
 		        <th>新增时间</th>
 		        <th>更新时间</th>
-		        <th>操作</th>
+		        <th class="right aligned" >操作</th>
 			</thead>
 	      	<tbody></tbody>
 		</table>
