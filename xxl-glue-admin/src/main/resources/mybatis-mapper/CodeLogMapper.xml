@@ -52,7 +52,7 @@
 		WHERE id NOT in(
 			SELECT id FROM(
 				SELECT id FROM xxl_glue_codelog
-				WHERE t.glue_id = #{glueId}
+				WHERE glue_id = #{glueId}
 				ORDER BY update_time desc
 				LIMIT 0, 10
 			) t1

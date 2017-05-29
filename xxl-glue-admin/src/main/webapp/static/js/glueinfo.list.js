@@ -52,12 +52,12 @@ $(function() {
 				"render": function ( data, type, row ) {
 					return function(){
 						// log url
-						var glueUrl = base_url +'/glueinfo/codeSourceEditor?id='+ row.id;
+						var glueWebIde = base_url +'/glueinfo/glueWebIde?id='+ row.id;
 
 						// html
 						tableData['key'+row.id] = row;
 						var html = '<span id="'+ row.id +'" >'+
-							'<button class="btn btn-primary btn-xs" type="button" onclick="javascript:window.open(\'' + glueUrl + '\')" >GLUE</button>  '+
+							'<button class="btn btn-primary btn-xs" type="button" onclick="javascript:window.open(\'' + glueWebIde + '\')" >WebIde</button>  '+
 							'<button class="btn btn-primary btn-xs clearCache" type="button">清理缓存</button>  '+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+

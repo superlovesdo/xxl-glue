@@ -3,7 +3,6 @@
 <html>
 <head>
     <title><@netCommon.commonName /></title>
-
 	<@netCommon.commonStyle />
     <!-- DataTables -->
     <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.css">

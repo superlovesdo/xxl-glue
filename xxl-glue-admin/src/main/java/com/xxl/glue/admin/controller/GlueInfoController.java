@@ -67,17 +67,17 @@ public class GlueInfoController {
 		return glueInfoService.clearCache(id, appNames);
 	}
 	
-	@RequestMapping("/codeSourceEditor")
+	@RequestMapping("/glueWebIde")
 	public String codeSourceEditor(Model model, int id){
 		GlueInfo codeInfo = glueInfoService.load(id);
 		model.addAttribute("codeInfo", codeInfo);
 		
 		if (codeInfo!=null) {
-			List<CodeLog> codeLogs = glueInfoService.loadLogs(id);
-			model.addAttribute("codeLogs", codeLogs);
+			List<CodeLog> codeLogList = glueInfoService.loadLogs(id);
+			model.addAttribute("codeLogList", codeLogList);
 		}
 		
-		return "code/code.editor";
+		return "glueinfo/glue.webide";
 	}
 	
 	@RequestMapping("/updateCodeSource")
