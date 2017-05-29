@@ -57,8 +57,8 @@ $(function() {
 						// html
 						tableData['key'+row.id] = row;
 						var html = '<span id="'+ row.id +'" >'+
-							'<button class="btn btn-primary btn-xs" type="job_del" type="button" onclick="javascript:window.open(\'' + glueUrl + '\')" >GLUE</button>  '+
-							'<button class="btn btn-primary btn-xs " _type="job_trigger" type="button">清理缓存</button>  '+
+							'<button class="btn btn-primary btn-xs" type="button" onclick="javascript:window.open(\'' + glueUrl + '\')" >GLUE</button>  '+
+							'<button class="btn btn-primary btn-xs clearCache" type="button">清理缓存</button>  '+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</span>';
@@ -286,6 +286,69 @@ $(function() {
 	});
 	$("#updateModal").on('hide.bs.modal', function () {
 		$("#updateModal .form")[0].reset()
+	});
+
+
+	// 清理缓存
+	$("#glue_list").on('click', '.clearCache',function() {
+
+		var id = $(this).parent('span').attr("id");
+		var row = tableData['key'+id];
+		if (!row) {
+			layer.open({
+				title: '系统提示',
+				content: ("任务信息加载失败，请刷新页面"),
+				icon: '2'
+			});
+			return;
+		}
+
+		// base data
+		$("#clearCacheModal .form input[name='id']").val( row.id );
+
+		// show
+		$('#clearCacheModal').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+	var clearCacheValidate = $("#clearCacheModal .form").validate({
+		errorElement : 'span',
+		errorClass : 'help-block',
+		focusInvalid : true,
+		highlight : function(element) {
+			$(element).closest('.form-group').addClass('has-error');
+		},
+		success : function(label) {
+			label.closest('.form-group').removeClass('has-error');
+			label.remove();
+		},
+		errorPlacement : function(error, element) {
+			element.parent('div').append(error);
+		},
+		submitHandler : function(form) {
+			// post
+			$.post(base_url + "/glueinfo/clearCache", $("#clearCacheModal .form").serialize(), function(data, status) {
+				if (data.code == "200") {
+					$('#updateModal').modal('hide');
+					layer.open({
+						title: '系统提示',
+						content: '清理成功',
+						icon: '1',
+						end: function(layero, index){
+							//window.location.reload();
+							glueTable.fnDraw();
+						}
+					});
+				} else {
+					layer.open({
+						title: '系统提示',
+						content: (data.msg || "清理失败"),
+						icon: '2'
+					});
+				}
+			});
+		}
+	});
+	$("#clearCacheModal").on('hide.bs.modal', function () {
+		$("#clearCacheModal .form")[0].reset()
 	});
 
 });

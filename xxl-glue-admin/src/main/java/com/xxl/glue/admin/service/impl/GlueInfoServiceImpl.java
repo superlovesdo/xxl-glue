@@ -114,6 +114,26 @@ public class GlueInfoServiceImpl implements IGlueInfoService {
 	}
 
 	@Override
+	public ReturnT<String> clearCache(int id, String appNames) {
+		GlueInfo codeInfo = glueInfoDao.load(id);
+		if (codeInfo == null) {
+			return new ReturnT<String>(500, "“GLUE”不存在");
+		}
+		// pub
+		Set<String> appList = new HashSet<String>();
+		if (StringUtils.isNotBlank(appNames)) {
+			for (String appName : appNames.split(",")) {
+				appList.add(appName);
+			}
+		}
+
+		// broadcast (pub)
+		boolean ret = XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), GlueMessageType.CLEAR_CACHE, appList);
+
+		return ret?ReturnT.SUCCESS:ReturnT.FAIL;
+	}
+
+	@Override
 	public ReturnT<String> updateCodeSource(CodeLog codeLog) {
 
 		// valid glue
@@ -148,26 +168,6 @@ public class GlueInfoServiceImpl implements IGlueInfoService {
 	@Override
 	public List<CodeLog> loadLogs(int glueId) {
 		return codeLogDao.findByGlueId(glueId);
-	}
-
-	@Override
-	public ReturnT<String> clearCache(int id, String appNames) {
-		GlueInfo codeInfo = glueInfoDao.load(id);
-		if (codeInfo == null) {
-			return new ReturnT<String>(500, "“GLUE”不存在");
-		}
-		// pub
-		Set<String> appList = new HashSet<String>();
-		if (StringUtils.isNotBlank(appNames)) {
-			for (String appName : appNames.split(",")) {
-				appList.add(appName);
-			}
-		}
-
-		// broadcast (pub)
-		XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), GlueMessageType.CLEAR_CACHE, appList);
-
-		return ReturnT.SUCCESS;
 	}
 
 }

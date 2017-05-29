@@ -171,7 +171,7 @@ public class DemoHandlerAImpl implements GlueHandler {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" >更新任务</h4>
+                <h4 class="modal-title" >更新GLUE基础信息</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal form" role="form" >
@@ -198,6 +198,34 @@ public class DemoHandlerAImpl implements GlueHandler {
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-6">
                             <button type="submit" class="btn btn-primary"  >保存</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <input type="hidden" name="id" >
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 清理缓存.模态框 -->
+<div class="modal fade" id="clearCacheModal" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" >清理GLUE缓存</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form" role="form" >
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-3 control-label">Which App?<font color="black">*</font></label>
+                        <div class="col-sm-7"><input type="text" class="form-control" name="appNames" placeholder="请输入待清理GLUE缓存项目的AppName，多个逗号分隔，为空则全站清理。" maxlength="20" ></div>
+                    </div>
+
+                    <hr>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <button type="submit" class="btn btn-primary"  >确认</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                             <input type="hidden" name="id" >
                         </div>

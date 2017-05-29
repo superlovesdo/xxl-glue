@@ -59,6 +59,13 @@ public class GlueInfoController {
 	public ReturnT<String> update(GlueInfo codeInfo){
 		return glueInfoService.update(codeInfo);
 	}
+
+
+	@RequestMapping("/clearCache")
+	@ResponseBody
+	public ReturnT<String> clearCache(int id, String appNames){
+		return glueInfoService.clearCache(id, appNames);
+	}
 	
 	@RequestMapping("/codeSourceEditor")
 	public String codeSourceEditor(Model model, int id){
@@ -78,12 +85,5 @@ public class GlueInfoController {
 	public ReturnT<String> updateCodeSource(HttpServletRequest request, CodeLog codeLog){
 		return glueInfoService.updateCodeSource(codeLog);
 	}
-	
-	@RequestMapping("/clearCache")
-	@ResponseBody
-	public ReturnT<String> clearCache(int id, String appNames){
-		return glueInfoService.clearCache(id, appNames);
-	}
-	
 
 }

@@ -18,11 +18,11 @@ public interface IGlueInfoService {
 	ReturnT<String> update(GlueInfo codeInfo);
 
 	public GlueInfo load(int id);
+
+	public ReturnT<String> clearCache(int id, String appNames);
 	
 	public ReturnT<String> updateCodeSource(CodeLog codeLog);
 
 	public List<CodeLog> loadLogs(int glueId);
-
-	public ReturnT<String> clearCache(int id, String appNames);
 
 }
