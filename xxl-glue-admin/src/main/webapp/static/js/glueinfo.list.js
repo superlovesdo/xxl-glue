@@ -327,7 +327,7 @@ $(function() {
 			// post
 			$.post(base_url + "/glueinfo/clearCache", $("#clearCacheModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
-					$('#updateModal').modal('hide');
+					$('#clearCacheModal').modal('hide');
 					layer.open({
 						title: '系统提示',
 						content: '清理成功',
