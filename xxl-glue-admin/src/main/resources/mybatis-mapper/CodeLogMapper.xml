@@ -23,13 +23,13 @@
 	
 	<insert id="save" parameterType="com.xxl.glue.admin.core.model.CodeLog" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_glue_codelog (
-			name,
+			glue_id,
 			remark,
 			source,
 			add_time,
 			update_time
 		) VALUES (
-			#{name}, 
+			#{glueId},
 			#{remark},
 			#{source},
 			now(),
@@ -54,7 +54,7 @@
 				SELECT id FROM xxl_glue_codelog
 				WHERE glue_id = #{glueId}
 				ORDER BY update_time desc
-				LIMIT 0, 10
+				LIMIT 0, 30
 			) t1
 		)
 	</delete>

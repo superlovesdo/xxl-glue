@@ -122,36 +122,28 @@
                     </div>
 
 <textarea name="source" style="display: none;">
-package com.xxl.groovy.example.service.impl;
+package com.xxl.glue.example.gluehandler;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.xxl.glue.core.handler.GlueHandler;
 
 /**
- * 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
- * 优点：在线编辑；推送更新；+ 直观；
-    
+ * GLUE示例
+ *
  * @author xuxueli 2016-4-14 15:36:37
  */
-public class DemoHandlerAImpl implements GlueHandler {
+public class DemoGlueHandler implements GlueHandler {
 
 	@Override
 	public Object handle(Map<String, Object> params) {
 
 		// 黑名单列表
 		Set<Integer> blackShops = new HashSet<Integer>();
-		blackShops.add(15826714);
-		blackShops.add(15826715);
-		blackShops.add(15826716);
-		blackShops.add(15826717);
-		blackShops.add(15826718);
-		blackShops.add(15826719);
+		blackShops.add(111);
+		blackShops.add(222);
+		blackShops.add(333);
 
 		return blackShops;
 	}

@@ -26,7 +26,7 @@
                 <div class="container">
 					<#-- icon -->
                     <div class="navbar-header">
-                        <a class="navbar-brand"><b>Web</b>IDE</a>
+                        <a href="${request.contextPath}" class="navbar-brand"><b>Web</b>IDE</a>
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                             <i class="fa fa-bars"></i>
                         </button>
@@ -35,7 +35,7 @@
                     <#-- left nav -->
                     <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
                         <ul class="nav navbar-nav">
-                            <li class="active" ><a href="javascript:;"><#list GlueTypeEnum as item><#if item == jobInfo.glueType>${item.desc}</#if></#list> 任务：${jobInfo.jobDesc}<span class="sr-only">(current)</span></a></li>
+                            <li class="active" ><a href="javascript:;"> GLUE：${codeInfo.name}<span class="sr-only">(current)</span></a></li>
                         </ul>
                     </div>
 
@@ -45,7 +45,7 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">版本回溯 <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li>
+                                    <li <#if codeLogList?exists && codeLogList?size gt 0 >style="display: none;" </#if> >
                                         <a href="javascript:;" class="source_version" version="version_now"  >
                                             当前版本
                                             <textarea id="version_now" style="display:none;" >${codeInfo.source}</textarea>
