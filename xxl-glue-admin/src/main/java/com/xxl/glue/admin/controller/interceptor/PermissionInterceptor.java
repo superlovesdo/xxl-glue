@@ -1,25 +1,44 @@
 package com.xxl.glue.admin.controller.interceptor;
 
 import com.xxl.glue.admin.controller.annotation.PermessionLimit;
-import com.xxl.glue.admin.core.model.User;
-import com.xxl.glue.admin.service.IXxlGLueUserService;
-import com.xxl.glue.admin.service.impl.XxlGlueUserServiceImpl;
+import com.xxl.glue.admin.core.util.CookieUtil;
+import com.xxl.glue.admin.core.util.PropertiesUtil;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.math.BigInteger;
 
 /**
- * 权限拦截
+ * 权限拦截, 简易版
  * @author xuxueli 2015-12-12 18:09:04
  */
 public class PermissionInterceptor extends HandlerInterceptorAdapter {
 
-	@Resource
-	private IXxlGLueUserService xxlGLueUserService;
+	public static final String LOGIN_IDENTITY_KEY = "XXL_GLUE_LOGIN_IDENTITY";
+	public static final String LOGIN_IDENTITY_TOKEN;
+	static {
+		String username = PropertiesUtil.getString("xxl.glue.login.username");
+		String password = PropertiesUtil.getString("xxl.glue.login.password");
+		String temp = username + "_" + password;
+		LOGIN_IDENTITY_TOKEN = new BigInteger(1, temp.getBytes()).toString(16);
+	}
+
+	public static boolean login(HttpServletResponse response, boolean ifRemember){
+		CookieUtil.set(response, LOGIN_IDENTITY_KEY, LOGIN_IDENTITY_TOKEN, ifRemember);
+		return true;
+	}
+	public static void logout(HttpServletRequest request, HttpServletResponse response){
+		CookieUtil.remove(request, response, LOGIN_IDENTITY_KEY);
+	}
+	public static boolean ifLogin(HttpServletRequest request){
+		String indentityInfo = CookieUtil.getValue(request, LOGIN_IDENTITY_KEY);
+		if (indentityInfo==null || !LOGIN_IDENTITY_TOKEN.equals(indentityInfo.trim())) {
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -28,40 +47,14 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 			return super.preHandle(request, response, handler);
 		}
 
-		// if limit
-		HandlerMethod method = (HandlerMethod)handler;
-		PermessionLimit permission = method.getMethodAnnotation(PermessionLimit.class);
-		boolean limit = (permission != null)?permission.login():true;
-		boolean superUser = (permission != null)?permission.superUser():false;
-
-		// login user
-		User loginUser = xxlGLueUserService.ifLogin(request);
-		request.setAttribute(XxlGlueUserServiceImpl.LOGIN_IDENTITY_KEY, loginUser);
-
-		// if pass
-		boolean ifPass = false;
-		if (limit) {
-			if (loginUser == null) {
-				ifPass = false;
-			} else {
-				if (superUser) {
-					// 0-普通用户、1-超级管理员
-					if (loginUser.getRole() == 1) {
-						ifPass = true;
-					} else {
-						ifPass = false;
-					}
-				} else {
-					ifPass = true;
-				}
+		if (!ifLogin(request)) {
+			HandlerMethod method = (HandlerMethod)handler;
+			PermessionLimit permission = method.getMethodAnnotation(PermessionLimit.class);
+			if (permission == null || permission.limit()) {
+				response.sendRedirect(request.getContextPath() + "/toLogin");
+				//request.getRequestDispatcher("/toLogin").forward(request, response);
+				return false;
 			}
-		} else {
-			ifPass = true;
-		}
-
-		if (!ifPass) {
-			response.sendRedirect(request.getContextPath() + "/toLogin");	//request.getRequestDispatcher("/toLogin").forward(request, response);
-			return false;
 		}
 
 		return super.preHandle(request, response, handler);

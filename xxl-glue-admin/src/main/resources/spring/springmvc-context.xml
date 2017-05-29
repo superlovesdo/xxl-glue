@@ -35,6 +35,10 @@
 			<mvc:mapping path="/**"/>
 			<bean class="com.xxl.glue.admin.controller.interceptor.PermissionInterceptor"/>
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.xxl.glue.admin.controller.interceptor.CookieInterceptor"/>
+		</mvc:interceptor>
 	</mvc:interceptors>
  	<bean id="exceptionResolver" class="com.xxl.glue.admin.controller.resolver.WebExceptionResolver" />
  	

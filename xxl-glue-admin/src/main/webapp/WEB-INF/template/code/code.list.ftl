@@ -2,158 +2,278 @@
 <!DOCTYPE html>
 <html>
 <head>
-  	<!-- Standard Meta -->
-  	<meta charset="utf-8" />
-  	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  	<!-- Site Properities -->
-  	<title>Glue</title>
+    <title><@netCommon.commonName /></title>
+
 	<@netCommon.commonStyle />
-	<!-- input -->
-	<link rel="stylesheet" type="text/css" href="${request.contextPath}/static/plugins/semantic-ui/dist/components/input.css">
-	<!-- datatables -->
-	<link rel="stylesheet" type="text/css" href="${request.contextPath}/static/plugins/datatables/media/css/dataTables.semanticui.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.css">
+
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini <#if cookieMap?exists && "off" == cookieMap["adminlte_settings"].value >sidebar-collapse</#if>">
+<div class="wrapper">
+    <!-- header -->
 	<@netCommon.commonHeader />
-	
-	<!-- code搜索框 -->
-	<div class="ui column stackable grid" style="padding: 1em;margin-top: 50px;">
-	  	<div class="column">
+		<!-- left -->
+	<@netCommon.commonLeft "code" />
 
-            <div class="ui labeled input">
-                <div class="ui label">分组</div>
-                <select class="ui  selection dropdown" id="bizName" >
-                    <option value="AL">Alabama</option>
-                    <option value="AK">Alaska</option>
-                    <option value="AZ">Arizona</option>
-                    <option value="AR">Arkansas</option>
-                    <option value="CA">California</option>
-                    <!-- Saving your scroll sanity !-->
-                    <option value="OH">Ohio</option>
-                    <option value="OK">Oklahoma</option>
-                    <option value="OR">Oregon</option>
-                </select>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>GLUE管理<small></small></h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">项目</span>
+                        <select class="form-control" id="jobGroup" >
+						<#list JobGroupList as group>
+                            <option value="${group.id}" >${group.title}</option>
+						</#list>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">Glue名称</span>
+                        <input type="text" class="form-control" id="executorHandler" autocomplete="on" >
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn btn-block btn-info" id="searchBtn">搜索</button>
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn btn-block btn-success add" type="button">+新增任务</button>
+                </div>
             </div>
 
-            <div class="ui labeled input">
-                <div class="ui label">GLUE</div>
-                <input type="text" placeholder="请输入codeName..." id="codeName" >
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">GLUE列表</h3>
+                        </div>
+                        <div class="box-body" >
+                            <table id="job_list" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th name="id" >id</th>
+                                    <th name="name" >名称</th>
+                                    <th name="about" >描述</th>
+                                    <th name="source" >源码</th>
+                                    <th name="remark" >备注</th>
+                                    <th name="addTime" >新增时间</th>
+                                    <th name="updateTime" >更新时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="ui labeled input">
-                <div class="ui default button" id="searchBtn" >搜索</div>
-                <button class="ui teal button" id="addBtn">新增</button>
-            </div>
-
-	    </div>
+        </section>
     </div>
-    
-	<!-- code列表 -->
-	<div class="column" style="padding: 1em;margin-top: 5px;">
-		<table class="ui left aligned table"  id="code_list" >
-			<thead>
-		        <th>id</th>
-		        <th>GlueKey</th>		<#-- 分组，设置Key；GlueKey，前缀加上分组Key -->
-		        <th>源码</th>
-		        <th>简介</th>
-		        <th>新增时间</th>
-		        <th>更新时间</th>
-		        <th class="right aligned" >操作</th>
-			</thead>
-	      	<tbody></tbody>
-		</table>
-	</div>
-	
-	<@netCommon.commonFooter />
-	
-	<!-- code：新增 -->
-	<div class="ui modal" id="addModal" >
-	  	<i class="close icon"></i>
-	  	<div class="header">新增</div>
-	  	<div class="content">
-	    	<form class="ui large form">
-		      	<div class="ui stacked segment2">
-					<div class="field">
-						<div class="ui labeled input">
-					      <a class="ui label">名称</a>
-					      <input type="text" name="name" placeholder="请输入...">
-					    </div>
-					</div>
-					<div class="field">
-						<div class="ui labeled input">
-					      <a class="ui label">简介</a>
-					      <input type="text" name="about" placeholder="请输入...">
-					    </div>
-					</div>
-					<div class="actions">
-						<div class="ui button labeled icon green submit">保存<i class="checkmark icon"></i></div>
-						<div class="ui button negative">取消</div>
-				    </div>
-		      	</div>
-		      	<div class="ui error message"></div>
-		      	<input type="text" name="remark" value="Demo代码初始化" style="display:none;" >
-<textarea name="source" style="display:none;" >
-package com.xxl.groovy.example.service.impl;
 
-import java.util.Map;
+    <!-- footer -->
+<@netCommon.commonFooter />
+</div>
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+<!-- job新增.模态框 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" >新增任务</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form" role="form" >
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">执行器<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="jobGroup" >
+							<#list JobGroupList as group>
+                                <option value="${group.id}" >${group.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="lastname" class="col-sm-2 control-label">任务描述<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="jobDesc" placeholder="请输入“描述”" maxlength="50" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">路由策略<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="executorRouteStrategy" >
+							<#list ExecutorRouteStrategyEnum as item>
+                                <option value="${item}" >${item.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="lastname" class="col-sm-2 control-label">Cron<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="jobCron" placeholder="请输入“Cron”" maxlength="20" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">运行模式<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control glueType" name="glueType" >
+							<#list GlueTypeEnum as item>
+                                <option value="${item}" >${item.desc}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="firstname" class="col-sm-2 control-label">JobHandler<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="executorHandler" placeholder="请输入“JobHandler”" maxlength="100" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">执行参数<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="executorParam" placeholder="请输入“执行参数”" maxlength="100" ></div>
+                        <label for="lastname" class="col-sm-2 control-label">子任务Key<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="childJobKey" placeholder="请输入子任务的任务Key,如存在多个逗号分隔" maxlength="100" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">阻塞处理策略<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="executorBlockStrategy" >
+							<#list ExecutorBlockStrategyEnum as item>
+                                <option value="${item}" >${item.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="lastname" class="col-sm-2 control-label">失败处理策略<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="executorFailStrategy" >
+							<#list ExecutorFailStrategyEnum as item>
+                                <option value="${item}" >${item.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">负责人<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="author" placeholder="请输入“负责人”" maxlength="50" ></div>
+                        <label for="lastname" class="col-sm-2 control-label">报警邮件<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="alarmEmail" placeholder="请输入“报警邮件”，多个邮件地址逗号分隔" maxlength="100" ></div>
+                    </div>
 
-import com.xxl.glue.core.handler.GlueHandler;
+                    <hr>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <button type="submit" class="btn btn-primary"  >保存</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
 
-/**
- * Demo GlueHandler
- * 
- * @author xuxueli 2016-4-14 15:36:37
- */
-public class DemoGlueHandler implements GlueHandler {
-	private static Logger Logger = LoggerFactory.getLogger(DemoGlueHandler.class);
+                    <input type="hidden" name="glueRemark" value="GLUE代码初始化" >
 
-	@Override
-	public Object handle(Map<String, Object> params) {
-		Logger.warn("GLUE : Hello World .");
-		return new Object();
-	}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-}
-</textarea>
-		    </form>
-	  	</div>
-	</div>
-	
-	<!-- code：同步 -->
-	<div class="ui modal" id="clearCacheModal" >
-	  	<i class="close icon"></i>
-	  	<div class="header">清除GLUE缓存</div>
-	  	<div class="content">
-	    	<form class="ui large form">
-		      	<div class="ui stacked segment2">
-					<div class="field">
-						<div class="ui labeled input">
-					      <a class="ui label">Witch App：</a>
-					      <input type="text" name="appNames" placeholder="请输入待清除GLUE缓存的AppName，如多个则用逗号分隔，为空则全站清除">
-					    </div>
-					</div>
-					<input type="hidden" name="id" >
-					<div class="actions">
-						<div class="ui button labeled icon green submit">确定<i class="checkmark icon"></i></div>
-						<div class="ui button negative">取消</div>
-				    </div>
-		      	</div>
-		      	<div class="ui error message"></div>
-		    </form>
-	  	</div>
-	</div>
+<!-- 更新.模态框 -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" >更新任务</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form" role="form" >
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">执行器<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="jobGroup" disabled >
+							<#list JobGroupList as group>
+                                <option value="${group.id}" >${group.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="lastname" class="col-sm-2 control-label">任务描述<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="jobDesc" placeholder="请输入“描述”" maxlength="50" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">路由策略<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="executorRouteStrategy" >
+							<#list ExecutorRouteStrategyEnum as item>
+                                <option value="${item}" >${item.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="lastname" class="col-sm-2 control-label">Cron<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="jobCron" placeholder="请输入“Cron”" maxlength="20" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">运行模式<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control glueType" name="glueType" disabled >
+							<#list GlueTypeEnum as item>
+                                <option value="${item}" >${item.desc}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="firstname" class="col-sm-2 control-label">JobHandler<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="executorHandler" placeholder="请输入“JobHandler”" maxlength="100" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">执行参数<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="executorParam" placeholder="请输入“执行参数”" maxlength="100" ></div>
+                        <label for="lastname" class="col-sm-2 control-label">子任务Key<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="childJobKey" placeholder="请输入子任务的任务Key,如存在多个逗号分隔" maxlength="100" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">阻塞处理策略<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="executorBlockStrategy" >
+							<#list ExecutorBlockStrategyEnum as item>
+                                <option value="${item}" >${item.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                        <label for="lastname" class="col-sm-2 control-label">失败处理策略<font color="red">*</font></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="executorFailStrategy" >
+							<#list ExecutorFailStrategyEnum as item>
+                                <option value="${item}" >${item.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">负责人<font color="red">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="author" placeholder="请输入“负责人”" maxlength="50" ></div>
+                        <label for="lastname" class="col-sm-2 control-label">报警邮件<font color="black">*</font></label>
+                        <div class="col-sm-4"><input type="text" class="form-control" name="alarmEmail" placeholder="请输入“报警邮件”，多个邮件地址逗号分隔" maxlength="100" ></div>
+                    </div>
+
+                    <hr>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <button type="submit" class="btn btn-primary"  >保存</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <input type="hidden" name="id" >
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <@netCommon.commonScript />
-
-<script src="${request.contextPath}/static/plugins/datatables/media/js/jquery.dataTables.min.js" ></script>
-<script src="${request.contextPath}/static/plugins/datatables/media/js/dataTables.semanticui.min.js" ></script>
-<script src="${request.contextPath}/static/plugins/moment/moment.min.js" ></script>
-
-<script src="${request.contextPath}/static/js/code.list.js" ></script>
-
+<!-- DataTables -->
+<script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
+<!-- moment -->
+<script src="${request.contextPath}/static/adminlte/plugins/daterangepicker/moment.min.js"></script>
+<script src="${request.contextPath}/static/js/code.list.js"></script>
 </body>
 </html>

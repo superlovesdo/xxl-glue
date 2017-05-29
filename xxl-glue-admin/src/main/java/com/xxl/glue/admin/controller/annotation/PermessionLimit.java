@@ -13,15 +13,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PermessionLimit {
-
+	
 	/**
-	 * 登陆拦截 (默认拦截)
+	 * 登录拦截 (默认拦截)
 	 */
-	boolean login() default true;
-
-	/**
-	 * 用户类型：0-普通用户、1-超级管理员 (默认普通用户)
-	 */
-	boolean superUser() default false;
+	boolean limit() default true;
 
 }

@@ -1,101 +1,106 @@
+<#macro commonName>分布式逻辑管理平台</#macro>
+<#macro commonProjectName><b>XXL</b>GLUE</#macro>
 <#macro commonStyle>
-  	<link rel="stylesheet" type="text/css" href="${request.contextPath}/static/plugins/semantic-ui/dist/semantic.min2.css">
-  	<link rel="stylesheet" type="text/css" href="${request.contextPath}/static/plugins/semantic-ui/dist/components/modal.min.css">
-  	<link rel="stylesheet" type="text/css" href="${request.contextPath}/static/plugins/pace/pace-theme-minimal.css">
-  	<style type="text/css">
-	body {
-		background-color: #FFFFFF;
-  	}
-  	.ui.menu .item img.logo {
-    	margin-right: 1.5em;
-  	}
-  	.main.container {
-    	margin-top: 7em;
-  	}
-  	.wireframe {
-    	margin-top: 2em;
-  	}
-  	.ui.footer.segment {
-		margin: 5em 0em 0em;
-    	padding: 5em 0em;
-  	}
-  	</style>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.5 -->
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="${request.contextPath}/static/plugins/font-awesome-4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"> -->
+    <link rel="stylesheet" href="${request.contextPath}/static/plugins/ionicons-2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/dist/css/AdminLTE-local.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/dist/css/skins/_all-skins.min.css">
+      
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+	<!-- pace -->
+	<link rel="stylesheet" href="${request.contextPath}/static/plugins/pace/themes/pace-theme-flash.css">
 </#macro>
 
 <#macro commonScript>
-<script src="${request.contextPath}/static/plugins/jquery/jquery.2.1.4.min.js" ></script>
-<script src="${request.contextPath}/static/plugins/semantic-ui/dist/semantic.min.js" ></script>
-<script src="${request.contextPath}/static/plugins/jquery/jquery.validate.1.13.1.min.js" ></script>
-<script src="${request.contextPath}/static/plugins/pace/pace.min.js" ></script>
+	<!-- jQuery 2.1.4 -->
+	<script src="${request.contextPath}/static/adminlte/plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<!-- Bootstrap 3.3.5 -->
+	<script src="${request.contextPath}/static/adminlte/bootstrap/js/bootstrap.min.js"></script>
+	<!-- FastClick -->
+	<script src="${request.contextPath}/static/adminlte/plugins/fastclick/fastclick.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="${request.contextPath}/static/adminlte/dist/js/app.min.js"></script>
+	<#-- jquery.slimscroll -->
+	<script src="${request.contextPath}/static/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 
-<script> var base_url = '${request.contextPath}/'; </script>
-<script src="${request.contextPath}/static/js/comalert.js" ></script>
-<script src="${request.contextPath}/static/js/common.js" ></script>
+    <!-- pace -->
+    <script src="${request.contextPath}/static/plugins/pace/pace.min.js"></script>
+    <#-- jquery cookie -->
+	<script src="${request.contextPath}/static/plugins/jquery/jquery.cookie.js"></script>
+
+	<#-- layer -->
+	<script src="${request.contextPath}/static/plugins/layer/layer.js"></script>
+
+	<#-- common -->
+    <script src="${request.contextPath}/static/js/common.1.js"></script>
+    <script>var base_url = '${request.contextPath}';</script>
 
 </#macro>
 
 <#macro commonHeader>
-<div class="ui fixed inverted menu">
-	<div class="ui container">
-		<a href="${request.contextPath}/code" class="header item"><img class="logo" src="${request.contextPath}/static/image/logo.png">Glue</a>
-	    <a href="${request.contextPath}/help" class="item">文档</a>
-        <#--<a href="https://my.oschina.net/xuxueli/blog/732499" target="_blank" class="item">文档</a>-->
-        <a href="https://github.com/xuxueli/xxl-glue" target="_blank" class="item">Github</a>
-	    <#--
-	    <a href="${request.contextPath}/code/demoEditor" class="item" target="_blank" >Demo编辑器</a>
-	  	<div class="ui simple dropdown item">
-			父菜单下拉 <i class="dropdown icon"></i>
-			<div class="menu">
-				<a class="item" href="#">子菜单A</a>
-				<a class="item" href="#">子菜单B</a>
-				<div class="divider"></div>
-				<div class="header">组标题</div>
-				<div class="item">
-	            	<i class="dropdown icon"></i>
-	            	子菜单组
-		            <div class="menu">
-		              <a class="item" href="#">子菜单C</a>
-		              <a class="item" href="#">子菜单D</a>
-		            </div>
-				</div>
-				<a class="item" href="#">子菜单E</a>
+	<header class="main-header">
+		<a href="${request.contextPath}/" class="logo">
+			<span class="logo-mini">XXL</span>
+			<span class="logo-lg"><@netCommon.commonName /></span>
+		</a>
+		<nav class="navbar navbar-static-top" role="navigation">
+			<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"><span class="sr-only">切换导航</span></a>
+          	<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+					<li class="dropdown user user-menu">
+	                    <a href=";" id="logoutBtn" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                      		<span class="hidden-xs">注销</span>
+	                    </a>
+					</li>
+				</ul>
 			</div>
-		</div>
-		-->
-		<a href="javascript:;" class="item right logoutBtn">注销</a>
-		<#--<a href="#" class="item">注册</a>-->
-    </div>
-</div>
+		</nav>
+	</header>
+</#macro>
+
+<#macro commonLeft pageName >
+	<!-- Left side column. contains the logo and sidebar -->
+	<aside class="main-sidebar">
+		<!-- sidebar: style can be found in sidebar.less -->
+		<section class="sidebar">
+			<!-- sidebar menu: : style can be found in sidebar.less -->
+			<ul class="sidebar-menu">
+				<li class="header">常用模块</li>
+				<li class="nav-click <#if pageName == "code">active</#if>" ><a href="${request.contextPath}/code"><i class="fa fa-circle-o text-aqua"></i><span>GLUE管理</span></a></li>
+				<li class="nav-click <#if pageName == "help">active</#if>" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-gray"></i><span>使用教程</span></a></li>
+			</ul>
+		</section>
+		<!-- /.sidebar -->
+	</aside>
 </#macro>
 
 <#macro commonFooter >
-<#--
-<div class="ui inverted vertical footer segment">
-	<div class="ui container">
-		<div class="ui stackable inverted divided equal height stackable grid">
-			<div class="three wide column">
-				<h4 class="ui inverted header teal">About</h4>
-	          	<div class="ui inverted link list">
-		            <a href="#" class="item">网站地图</a>
-		            <a href="#" class="item">联系我们</a>
-		            <a href="#" class="item">意见反馈</a>
-		            <a href="#" class="item disabled">赞助</a>
-	          	</div>
-			</div>
-	        <div class="three wide column">
-	          	<h4 class="ui inverted header teal">服务</h4>
-	          	<div class="ui inverted link list">
-		            <a href="#" class="item">在线教程</a>
-		            <a href="#" class="item">接入文档</a>
-		            <a href="#" class="item">问题汇总</a>
-	          	</div>
-			</div>
-			<div class="seven wide column">
-				<h4 class="ui inverted header">热米饭里拌什么最好吃？</h4>
-				<p>土豆烧牛肉。赫鲁晓夫说土豆烧牛肉是共产主义，此言不虚。</p>
-			</div>
+	<footer class="main-footer">
+        Powered by <b>XXL-GLUE</b> 1.3
+		<div class="pull-right hidden-xs">
+            <strong>Copyright &copy; 2015-${.now?string('yyyy')} &nbsp;
+                <a href="https://github.com/xuxueli/xxl-glue" target="_blank" >github</a>&nbsp;
+                <a href="https://my.oschina.net/xuxueli/blog/732499" target="_blank" >oschina</a>
+            </strong><!-- All rights reserved. -->
 		</div>
-	</div>
-</div>
--->
+	</footer>
 </#macro>
