@@ -67,7 +67,7 @@ public abstract class XxlZkBroadcastWatcher extends XxlZkClient implements Watch
 	protected boolean produce(String path, String data) {
 		Stat stat = setData(path, data);
 		boolean ret = stat!=null?true:false;
-		logger.info(">>>>>>>>>>> XxlZkBroadcastWatcher producer:" + ret);
+		logger.info(">>>>>>>>>>> XxlZkBroadcastWatcher producer:{}, {}={}", ret, path, data);
 		return ret;
 	}
 

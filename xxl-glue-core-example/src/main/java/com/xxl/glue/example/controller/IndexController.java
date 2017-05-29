@@ -4,7 +4,6 @@ package com.xxl.glue.example.controller;
 import com.xxl.glue.core.GlueFactory;
 import com.xxl.glue.core.loader.GlueLoader;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -34,19 +33,19 @@ public class IndexController {
 		map.put("tim", System.currentTimeMillis());
 		return map;
 	}
-	
-	@RequestMapping(value="/code/{name}", produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value="/code")
 	@ResponseBody
-	public String code(@PathVariable String name) {
+	public String code(String name) {
 		String source = dbGlueLoader.load(name);
 		return source;
 	}
 	
 	// ---------------------- GLUE 测试 -------------------
 	
-	@RequestMapping("/glue/{name}")
+	@RequestMapping("/glue")
 	@ResponseBody
-	public String glue(@PathVariable String name) {
+	public String glue(String name) {
 		Object result = null;
 		
 		try {

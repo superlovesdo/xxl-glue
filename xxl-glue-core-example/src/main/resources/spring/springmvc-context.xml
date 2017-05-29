@@ -29,5 +29,14 @@
 		<property name="cache" value="true" />
 		<property name="order" value="0" />
 	</bean>
+
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/template/" />
+		<property name="freemarkerSettings">
+			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="location" value="classpath:freemarker.properties" />
+			</bean>
+		</property>
+	</bean>
  	
 </beans>
