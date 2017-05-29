@@ -1,17 +1,17 @@
 package com.xxl.glue.admin.dao;
 
-import java.util.List;
-
 import com.xxl.glue.admin.core.model.CodeLog;
+
+import java.util.List;
 
 public interface ICodeLogDao {
 	
 	public int save(CodeLog codeLog);
 	
-	public List<CodeLog> loadLogsByName(String name);
+	public List<CodeLog> findByGlueId(int glueId);
 
-	public int removeOldLogs(String name);
+	public int removeOldLogs(int glueId);
 
-	public int delete(String name);
+	public int delete(int glueId);
 	
 }

@@ -5,37 +5,33 @@
 	
 	<resultMap id="CodeLog" type="com.xxl.glue.admin.core.model.CodeLog" >
 		<result column="id" property="id" />
-	    <result column="name" property="name" />
-	    <result column="about" property="about" />
+	    <result column="glue_id" property="glueId" />
+		<result column="remark" property="remark" />
 	    <result column="source" property="source" />
-	    <result column="remark" property="remark" />
 	    <result column="add_time" property="addTime" />
 	    <result column="update_time" property="updateTime" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		t.id,
-		t.name,
-		t.about,
-		t.source,
+		t.glue_id,
 		t.remark,
+		t.source,
 		t.add_time,
 		t.update_time
 	</sql>
 	
 	<insert id="save" parameterType="com.xxl.glue.admin.core.model.CodeLog" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO xxl_glue_code_log (
+		INSERT INTO xxl_glue_codelog (
 			name,
-			about,
-			source,
 			remark,
+			source,
 			add_time,
 			update_time
 		) VALUES (
 			#{name}, 
-			#{about},
-			#{source},
 			#{remark},
+			#{source},
 			now(),
 			now()
 		);
@@ -44,28 +40,28 @@
 		</selectKey> 
 	</insert>
 	
-	<select id="loadLogsByName" parameterType="java.lang.String" resultMap="CodeLog" >
+	<select id="findByGlueId" parameterType="java.lang.Integer" resultMap="CodeLog" >
 		SELECT <include refid="Base_Column_List" />
-		FROM xxl_glue_code_log AS t
-		where name = #{name}
+		FROM xxl_glue_codelog AS t
+		where t.glue_id = #{glueId}
 		order by add_time desc
 	</select>
 	
-	<delete id="removeOldLogs" parameterType="java.lang.String" >
-		DELETE FROM xxl_glue_code_log
+	<delete id="removeOldLogs" parameterType="java.lang.Integer" >
+		DELETE FROM xxl_glue_codelog
 		WHERE id NOT in(
 			SELECT id FROM(
-				SELECT id FROM xxl_glue_code_log
-				WHERE `name` = #{name}
+				SELECT id FROM xxl_glue_codelog
+				WHERE t.glue_id = #{glueId}
 				ORDER BY update_time desc
 				LIMIT 0, 10
 			) t1
 		)
 	</delete>
 	
-	<delete id="delete" parameterType="java.lang.String" >
-		DELETE FROM xxl_glue_code_log
-		WHERE `name` = #{name}
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM xxl_glue_codelog
+		WHERE glue_id = #{glueId}
 	</delete>
 	
 </mapper>

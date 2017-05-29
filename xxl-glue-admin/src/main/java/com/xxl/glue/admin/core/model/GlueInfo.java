@@ -5,13 +5,13 @@ import java.util.Date;
 /**
  * @author xuxueli 2016-1-1 19:18:43
  */
-public class CodeInfo {
+public class GlueInfo {
 	
 	private int id;
+	private int projectId;
 	private String name;
 	private String about;
 	private String source;
-	private String remark;
 	private Date addTime;
 	private Date updateTime;
 	
@@ -20,6 +20,12 @@ public class CodeInfo {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public int getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
 	}
 	public String getName() {
 		return name;
@@ -38,12 +44,6 @@ public class CodeInfo {
 	}
 	public void setSource(String source) {
 		this.source = source;
-	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
 	}
 	public Date getAddTime() {
 		return addTime;

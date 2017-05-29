@@ -21,7 +21,7 @@ public class IndexController {
 	@RequestMapping("")
 	@PermessionLimit
 	public String index(Model model, HttpServletRequest request) {
-		return "redirect:/code";
+		return "redirect:/glueinfo";
 	}
 
 	@RequestMapping("/toLogin")

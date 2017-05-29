@@ -20,18 +20,18 @@ public class CodeLogDaoImpl implements ICodeLogDao {
 	}
 	
 	@Override
-	public List<CodeLog> loadLogsByName(String name) {
-		return sqlSessionTemplate.selectList("CodeLogMapper.loadLogsByName", name);
+	public List<CodeLog> findByGlueId(int glueId) {
+		return sqlSessionTemplate.selectList("CodeLogMapper.findByGlueId", glueId);
 	}
 
 	@Override
-	public int removeOldLogs(String name) {
-		return sqlSessionTemplate.delete("CodeLogMapper.removeOldLogs", name);
+	public int removeOldLogs(int glueId) {
+		return sqlSessionTemplate.delete("CodeLogMapper.removeOldLogs", glueId);
 	}
 
 	@Override
-	public int delete(String name) {
-		return sqlSessionTemplate.delete("CodeLogMapper.delete", name);
+	public int delete(int glueId) {
+		return sqlSessionTemplate.delete("CodeLogMapper.delete", glueId);
 	}
 
 }
