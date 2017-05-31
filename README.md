@@ -18,6 +18,7 @@ XXL-GLUE在功能上完全可以替代前者，只需要在可执行代码块中
 - 4、兼容Spring：GLUE代码中支持@Resource和@Autowired两种方式注入Spring容器中服务;
 - 5、版本：支持30个历史版本的版本回溯；
 - 6、调试: 在开发阶段可开启本地模式, 该模式下将会加载本地GlueHandler文件, 支持Debug, 可以方便的进行本地调试;
+- 7、项目分组：支持设置项目分组，以项目为维度进行GLUE分组管理；
 
 ### 1.3 下载
 ##### 源码地址 (将会在两个git仓库同步发布最新代码)
@@ -47,13 +48,13 @@ XXL-GLUE在功能上完全可以替代前者，只需要在可执行代码块中
     /db                : 数据库交表脚本位置
     /xxl-glue-admin    : GLUE管理中心
     /xxl-glue-core     : 公共依赖
-    /xxl-glue-core-example : 接入XXL-GLUE的Demo项目, 可以参考它来学习如何在项目中接入GLUE
+    /xxl-glue-core-example : GLUE接入Example项目, 可以参考它来学习如何在项目中接入并使用GLUE
 
-### 初始化数据库
+### 1、初始化数据库
 
 执行数据库建表脚本: /xxl-glue/db/mysql_xxl_glue.sql
 
-### 部署部署"GLUE管理中心"(xxl-glue-admin)
+### 2、部署部署"GLUE管理中心"(xxl-glue-admin)
 配置文件位置：xxl-glue-admin/resources/xxl-glue-admin.properties
 
 ```
@@ -73,7 +74,7 @@ xxl.glue.login.password=123456
 
 编译War包部署即可。
 
-### 部署部署 "接入XXL-GLUE的Demo项目"(xxl-glue-core-example)
+### 3、部署部署 "GLUE接入Example项目"(xxl-glue-core-example)
 配置文件位置：xxl-glue-core-example/resources/xxl-glue.properties
 
 ```
@@ -89,27 +90,90 @@ xxl.glue.zkserver=127.0.0.1:2181
 
 编译War包部署即可。
 
-### 开发第一个GlueHandler (Hello World) 
+### 4、开发第一个Glue (Hello World) 
 登陆 "GLUE管理中心" 并点击右上角 "新增GLUE" 按钮，填写 “GLUE名称”（该名称是该GLUE项的唯一标示）和简介，确定后即新增一条GLUE。
 
 点击GLUE右侧 “Web IDE”按钮，即可进入GLUE的代码开发界面，可在该界面开发GLUE代码，也可以在IDE中开发完成后粘贴进来，默认已经初始化Demo代码。
-（每个GlueHandler必须是实现统一父接口GlueHandler的子类；详情可参考章节 "5.1" ）
+（每个Glue必须是实现统一父接口GlueHandler的子类；详情可参考章节 "5.1" ）
+
+初始化数据局之后，系统默认生成了三个典型场景的GLUE示例，可以参考GLUE示例开发第一个GLUE（GLUE的三种经典使用场景，可参考 "章节四"）。
 	
-### 测试
-接入XXL-GLUE的Demo项目(xxl-glue-core-example)中已经提供了一个使用
-
-
-部署启动 "接入XXL-GLUE的Demo项目(xxl-glue-core-example)"，假设部署在 "xxl-glue-core-example" 路径。
-
-
-
-
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31231732_bzf0.png "在这里输入图片标题")
     
-    http://localhost:8080/xxl-glue-core-example/?name=demo_project.demo_glue
     
-### 如何Debug测试GlueHandler
+### 5、调用Glue
+业务中调用Glue只需要执行以下一行代码即可：    
+```
+	Object result = GlueFactory.glue("glue名称", "glue入参，Map类型");
+```
 
-源码加载器配置,见项目"xxl-glue-core-example"的"applicationcontext-glue.xml"配置中"GlueFactory"实例的"glueLoader"属性;
+
+"GLUE接入Example项目(xxl-glue-core-example)" 中，针对 "初始化数据局之后，系统默认生成了三个典型场景的GLUE示例" 提供了相应的示例调用代码，代码位置是：
+
+    xxl-glue-core-example/com.xxl.glue.example.controller.IndexController.index
+
+部署启动 "GLUE接入Example项目(xxl-glue-core-example)"，假设项目部署在 "/xxl-glue-core-example" 路径，访问以下链接可执行测试逻辑。
+
+    http://localhost:8080/xxl-glue-core-example/
+
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31231741_YHDB.png "在这里输入图片标题")
+
+
+## 三、操作详解
+
+### 1、登陆GLUE
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31233041_IXh1.png "在这里输入图片标题")
+
+
+### 2、项目列表
+系统以项目为维度进行GLUE分组管理；可以在 "项目管理" 模块查看系统中的项目列表，默认已经提供了一个 "示例项目"；
+
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31233738_CSqk.png "在这里输入图片标题")
+
+### 3、新增项目
+在 "项目管理" 界面，点击右上角 "新增项目" 可以新增项目，项目属性说明如下：
+
+    项目AppName：项目AppName为项目分组标识，在广播刷新GLUE时可指定AppName实现灰度刷新指定AppNamd项目中的GLUE示例。正确格式为：长度4-20位的小写字母、数字和下划线
+    项目名称：项目中文名称
+
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31233656_pcdP.png "在这里输入图片标题")
+
+### 4、：GLUE列表
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31231732_bzf0.png "在这里输入图片标题")
+
+### 5、新建GLUE
+点击右上角 "新建GLUE" 按钮，弹框填写GLUE信息即可新建GLUE，属性介绍如下：
+
+    项目：GLUE所属的项目，
+    GLUE：Glue名称，每个GLUE的唯一标示，新建GLUE时将会自动将所项目的AppName作为名称前缀。正确格式为：长度4-20位的大小写字母、数字和下划线
+    描述：GLUE的描述介绍信息
+
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31233056_Vz22.png "在这里输入图片标题")
+
+
+### 6、开发GLUE代码
+找到新建的GLUE，点击右侧的 “Web IDE” 按钮进入GLUE开发的Wed IDE界面。默认已经初始化示例代码，如需开发业务代码，只需要在handle方法中开发即可。
+
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31233257_i2HN.png "在这里输入图片标题")
+
+### 7、一句话执行GlueHandler
+首先确定项目中已经接入GLUE（参考上文 “GLUE接入Example项目(xxl-glue-core-example)”，接入非常方便）；
+
+业务中调用Glue只需要执行以下一行代码即可：    
+```
+	Object result = GlueFactory.glue("glue名称", "glue入参，Map类型");
+```
+
+### 8、推送更新
+Glue在第一次加载之后将会缓存在内存中，点击右侧 “清除缓存” 按钮可以推送刷新GLUE缓存。
+清除缓存弹框中有一个输入框 "Witch APP", 输入接入方项目的AppName, 即可精确的灰度刷新该项目中的相应Glue。如果不输入, 则广播刷新所有项目中响应的Glue。
+
+
+![输入图片说明](https://static.oschina.net/uploads/img/201705/31235014_4t4f.png "在这里输入图片标题")
+
+### 9、如何Debug测试GlueHandler
+
+首先，需要了解源码加载器配置,见项目"xxl-glue-core-example"的"applicationcontext-glue.xml"配置中"GlueFactory"实例的"glueLoader"属性;
 
 - dbGlueLoader(数据库加载器,不支持Debug,源码线上维护): 默认XXL-GLUE在接入方通过加载数据库中GLUE源码进而实例化并执行, 需要配置一个"dbGlueLoader"。
 - FileGlueLoader(本地加载器,支持Debug): XXL-GLUE支持配置本地加载器, 只是掉上述配置中的"glueLoader"属性即可,则使用默认的文件加载器;拥有以下特点:
@@ -117,150 +181,133 @@ xxl.glue.zkserver=127.0.0.1:2181
     - 会循环遍历该目录下子目录文件进行匹配,因此文件可以在该目录下自由存放;
     - FileGlueLoader方式使用XXL-GLUE,支持GlueHandler的debug断点;
     
-### 业务中如何执行自己的GlueHandler
-
-执行以下一行代码即可    
-```
-	Object result = GlueFactory.glue("glue名称", "glue入参，Map类型");
-```
-
-### 如何广播刷新GlueHandler
-
-进入GLUE管理中心, 在GlueHandler的右侧, 点击 "清除缓存" 按钮将会弹框确认是否刷新GLUE。
-
-该弹框中有一个输入框 "Witch APP", 输入接入方项目的AppName, 即可精确的灰度刷新该项目中的相应GlueHandler。如果不输入, 则广播刷新所有项目中响应的GlueHandler。
-
-
-## 三、操作指南
-### 第一步：登陆GLUE
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200804_Yuox.png "在这里输入图片标题")
-
-### 第二步：新建GLUE项
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200827_kkQX.png "在这里输入图片标题")
-
-### 第三步：GLUE列表
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200852_Q3Mj.png "在这里输入图片标题")
-
-### 第四步：开发GLUE代码
-点击右侧 “编辑” 按钮，进入GLUE开发的Wed IDE界面。默认已经初始化Hello World示例代码，如需开发业务代码，只需要在handle方法中开发即可。
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200932_HAsd.png "在这里输入图片标题")
-
-### 第五步：一句话执行GlueHandler
-首先确定项目中已经接入GLUE（参考上文“三步接入GLUE”，接入非常方便）；
-然后执行一行代码即可；
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14200956_vxNj.png "在这里输入图片标题")
-
-### 第六步：推送更新
-GlueHandler在第一次加载之后将会缓存在内存中，点击右侧 “清楚缓存” 按钮可以推送更新，填写AppName将会精确定位单个项目进行缓存更新，如果为空则全站广播。
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/14201023_Y3Be.png "在这里输入图片标题")
-
-
+当源码加载器选择 "FileGlueLoader" 时，将会加载本地GLUE脚本文件，此时可以进行代码Debug操作。
 
 ## 四、GlueHandler的三种经典使用场景, 
-### 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
-```
-package com.xxl.groovy.example.service.impl;
+### 示例场景01：托管 “配置信息”
+尤其适用于数据结构比较复杂的配置项
 
-import java.util.HashSet;
-import java.util.Set;
+```
+package com.xxl.glue.example.handler;
 
 import com.xxl.glue.core.handler.GlueHandler;
-
-/**
- * 场景A：托管 “配置信息” ，尤其适用于数据结构比较复杂的配置项
- * 优点：在线编辑；推送更新；+ 直观；
- * @author xuxueli 2016-4-14 15:36:37
- */
-public class DemoHandlerAImpl implements GlueHandler {
-
-	@Override
-	public Object handle(Map<String, Object> params) {
-		
-		// 【列表配置】
-		Set<Integer> blackShops = new HashSet<Integer>();								// 黑名单列表
-		blackShops.add(15826714);
-		blackShops.add(15826715);
-		blackShops.add(15826716);
-		blackShops.add(15826717);
-		blackShops.add(15826718);
-		blackShops.add(15826719);
-		
-		return blackShops;
-	}
-	
-}
-```
-
-### 场景B：托管 “静态方法”，可以将配置解析逻辑一并托管，只关注返回结果即可
-```
-package com.xxl.groovy.example.service.impl;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+
+/**
+ * 示例场景01：托管 “配置信息”
+ *
+ * 优点：
+ * 		1、在线编辑；推送更新；
+ * 		2、该场景下，相较于同类型配置管理系统，支持数据类型更加丰富，不仅支持基础类型，甚至支持复杂对象；
+ * 		3、该场景下，配置信息的操作和展示，更加直观；
+ *
+ * @author xuxueli 2016-4-14 15:36:37
+ */
+public class DemoGlueHandler01 implements GlueHandler {
+
+	@Override
+	public Object handle(Map<String, Object> params) {
+		
+		/*
+		// 【基础类型配置】，例如：活动开关、短信发送次数阀值、redis地址等；
+		boolean activitySwitch = true;													// 活动开关：true=开、false=关
+		int smsLimitCount = 3;															// 短信发送次数阀值
+		String brokerURL = "failover:(tcp://127.0.0.1:61616,tcp://127.0.0.2:61616)";	// redis地址等
+
+		// 【对象类型配置……】
+		*/
+
+		// 【列表配置】
+		HashSet<String> blackTelephones = new HashSet<String>();						// 手机号码黑名单列表
+		blackTelephones.add("15000000000");
+		blackTelephones.add("15000000001");
+		blackTelephones.add("15000000002");
+
+		return blackTelephones;
+	}
+	
+}
+
+```
+
+### 场景02：托管 “静态方法”
+可以将配置解析逻辑一并托管，只关注返回结果即可
+```
+package com.xxl.glue.example.handler;
 
 import com.xxl.glue.core.handler.GlueHandler;
 
+import java.util.HashSet;
+import java.util.Map;
+
 /**
- * 场景B：托管 “静态方法”
- * 优点：...； + 组件共享；
+ * 示例场景02：托管 “静态方法”
+ *
+ * 优点：
+ * 		1、在线编辑；推送更新；
+ * 		2、该场景下，托管公共组件，方便组件统一维护和升级；
+ *
  * @author xuxueli 2016-4-14 16:07:03
  */
-public class DemoHandlerBImpl implements GlueHandler {
-	private static final String SHOPID = "shopid";
-	
-	private static Set<Integer> blackShops = new HashSet<Integer>();
+public class DemoGlueHandler02 implements GlueHandler {
+
+	// 手机号码黑名单列表
+	private static HashSet<String> blackTelephones = new HashSet<String>();
 	static {
-		blackShops.add(15826714);
-		blackShops.add(15826715);
-		blackShops.add(15826716);
-		blackShops.add(15826717);
-		blackShops.add(15826718);
-		blackShops.add(15826719);
+		blackTelephones.add("15000000000");
+		blackTelephones.add("15000000001");
+		blackTelephones.add("15000000002");
 	}
-	
+
 	/**
-	 * 商户黑名单判断
+	 * 手机号码黑名单校验Util
+	 *
+	 * @param telephone
+	 * @return
 	 */
-	@Override
-	public Object handle(Map<String, Object> params) {
-		int shopid = 0;
-		if (params!=null && params.get(SHOPID)!=null) {
-			shopid = (Integer) params.get(SHOPID);
-		}
-		if (shopid > 0 && blackShops.contains(shopid)) {
+	private boolean isBlackTelephone(String telephone) {
+		if (telephone!=null && blackTelephones.contains(telephone)) {
 			return true;
 		}
 		return false;
 	}
 	
+	@Override
+	public Object handle(Map<String, Object> params) {
+		String telephone = (params!=null)? (String) params.get("telephone") :null;
+		return isBlackTelephone(telephone);
+	}
+	
 }
+
 ```
 
-### 场景C：托管 “动态服务”，可以灵活组装接口和服务, 扩展服务的动态特性，作为公共模块。
+### 场景C：示例场景03：托管 “动态服务”
+可以灵活组装接口和服务,扩展服务的动态特性，作为公共服务。
 ```
-package com.xxl.groovy.example.service.impl;
-
-import java.util.Map;
+package com.xxl.glue.example.handler;
 
 import com.xxl.glue.core.handler.GlueHandler;
 
+import java.util.Map;
+
 /**
- * 场景B：托管 “抽象且离散的逻辑单元”
- * 优点：...；逻辑封装（伪服务）；
+ * 示例场景03：托管 “动态服务”
+ *
+ * 优点：
+ * 		1、在线编辑；推送更新；
+ * 		2、该场景下，服务内部可以灵活组装和调用其他Service服务, 扩展服务的动态特性，作为公共服务。
+ *
  * @author xuxueli 2016-4-14 16:07:03
  */
-public class DemoHandlerCImpl implements GlueHandler {
+public class DemoGlueHandler03 implements GlueHandler {
 	private static final String SHOPID = "shopid";
 	
 	/*
 	@Resource
-	private AccountService accountService;
-	@Autowired
-	private AccountService accountServiceB;
+	private UserPhoneService userPhoneService;	// 手机号码黑名单Service，此处仅作为示例
 	*/
 	
 	/**
@@ -270,19 +317,17 @@ public class DemoHandlerCImpl implements GlueHandler {
 	public Object handle(Map<String, Object> params) {
 		
 		/*
-		int shopid = 0;
-		if (params!=null && params.get(SHOPID)!=null) {
-			shopid = (Integer) params.get(SHOPID);
-		}
-		if (shopid > 0 && accountService.isBlackShop()) {
-			return true;
-		}
+		String telephone = (params!=null)? (String) params.get("telephone") :null;
+
+		boolean isBlackTelephone = userPhoneService.isBlackTelephone(telephone);
+		return isBlackTelephone;
 		*/
 		
-		return false;
+		return true;
 	}
 	
 }
+
 ```
 
 

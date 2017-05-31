@@ -24,12 +24,24 @@ public class IndexController {
 			String telephone = "15000000000";
 
 			StringBuffer sb = new StringBuffer();
-			sb.append("valid black tel: ").append(telephone).append("<hr>")
+			sb.append("valid black telephone: ").append(telephone).append("<hr><br>")
 			.append("DemoGlueHandler01: ").append(isBlackTelephone01(telephone)).append("<br><br>")
 			.append("DemoGlueHandler02: ").append(isBlackTelephone01(telephone)).append("<br><br>")
 			.append("DemoGlueHandler03: ").append(isBlackTelephone03(telephone));
 
 			return sb.toString();
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+	}
+
+	@RequestMapping("/glue")
+	@ResponseBody
+	public String glue(String name) {
+		try {
+			Object result = GlueFactory.glue(name, null);
+
+			return result.toString();
 		} catch (Exception e) {
 			return e.getMessage();
 		}

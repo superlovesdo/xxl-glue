@@ -63,7 +63,7 @@
                                 <tr>
                                     <th name="id" >id</th>
                                     <th name="projectId" >项目</th>
-                                    <th name="name" >Glue名称</th>
+                                    <th name="name" >GlueName</th>
                                     <th name="about" >描述</th>
                                     <th name="source" >源码</th>
                                     <th name="addTime" >新增时间</th>
@@ -122,30 +122,30 @@
                     </div>
 
 <textarea name="source" style="display: none;">
-package com.xxl.glue.example.gluehandler;
-
-import java.util.HashSet;
-import java.util.Set;
+package com.xxl.glue.example.handler;
 
 import com.xxl.glue.core.handler.GlueHandler;
 
+import java.util.HashSet;
+import java.util.Map;
+
 /**
- * GLUE示例
+ * 示例Glue
  *
  * @author xuxueli 2016-4-14 15:36:37
  */
-public class DemoGlueHandler implements GlueHandler {
+public class DemoGlueHandler01 implements GlueHandler {
 
 	@Override
 	public Object handle(Map<String, Object> params) {
 
-		// 黑名单列表
-		Set<Integer> blackShops = new HashSet<Integer>();
-		blackShops.add(111);
-		blackShops.add(222);
-		blackShops.add(333);
+		// 手机号码黑名单列表
+		HashSet<String> blackTelephones = new HashSet<String>();
+		blackTelephones.add("15000000000");
+		blackTelephones.add("15000000001");
+		blackTelephones.add("15000000002");
 
-		return blackShops;
+		return blackTelephones;
 	}
 
 }
