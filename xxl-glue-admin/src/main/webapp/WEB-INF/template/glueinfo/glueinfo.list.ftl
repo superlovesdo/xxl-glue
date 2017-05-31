@@ -63,7 +63,7 @@
                                 <tr>
                                     <th name="id" >id</th>
                                     <th name="projectId" >项目</th>
-                                    <th name="name" >名称</th>
+                                    <th name="name" >Glue名称</th>
                                     <th name="about" >描述</th>
                                     <th name="source" >源码</th>
                                     <th name="addTime" >新增时间</th>

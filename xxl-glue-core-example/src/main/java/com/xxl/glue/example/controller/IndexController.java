@@ -6,10 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * demo controller
@@ -18,20 +17,67 @@ import java.text.MessageFormat;
 @Controller
 public class IndexController {
 	
-	@RequestMapping("")
+	@RequestMapping
 	@ResponseBody
-	public String index(String name) {
-		Object result = null;
-		
+	public String index() {
 		try {
-			result = GlueFactory.glue(name, null);
-		} catch (Exception e) {
-			Writer writer = new StringWriter();
-	        e.printStackTrace(new PrintWriter(writer));
-	        result = writer.toString();
-		}
+			String telephone = "15000000000";
 
-		return MessageFormat.format("code name : {0}<hr><pre>{1}</pre>", name, result);
+			StringBuffer sb = new StringBuffer();
+			sb.append("valid black tel: ").append(telephone).append("<hr>")
+			.append("DemoGlueHandler01: ").append(isBlackTelephone01(telephone)).append("<br><br>")
+			.append("DemoGlueHandler02: ").append(isBlackTelephone01(telephone)).append("<br><br>")
+			.append("DemoGlueHandler03: ").append(isBlackTelephone03(telephone));
+
+			return sb.toString();
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 	}
-	
+
+	/**
+	 * 示例场景01：托管 “配置信息”
+	 *
+	 * @param telephone
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean isBlackTelephone01(String telephone) throws Exception {
+		Set<String> blackTelephones = (Set<String>) GlueFactory.glue("demo_project.DemoGlueHandler01", null);
+		if (blackTelephones.contains(telephone)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 示例场景02：托管 “静态方法”
+	 *
+	 * @param telephone
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean isBlackTelephone02(String telephone) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("telephone", telephone);
+
+		Boolean result = (Boolean) GlueFactory.glue("demo_project.DemoGlueHandler02", params);
+		return result;
+	}
+
+	/**
+	 * 示例场景03：托管 “动态服务”
+	 *
+	 * @param telephone
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean isBlackTelephone03(String telephone) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("telephone", "15000000000");
+
+		Boolean result = (Boolean) GlueFactory.glue("demo_project.DemoGlueHandler03", params);
+		return result;
+	}
+
 }

@@ -57,7 +57,7 @@ $(function() {
 						// html
 						tableData['key'+row.id] = row;
 						var html = '<span id="'+ row.id +'" >'+
-							'<button class="btn btn-primary btn-xs" type="button" onclick="javascript:window.open(\'' + glueWebIde + '\')" >WebIde</button>  '+
+							'<button class="btn btn-info btn-xs" type="button" onclick="javascript:window.open(\'' + glueWebIde + '\')" >WebIde</button>  '+
 							'<button class="btn btn-primary btn-xs clearCache" type="button">清理缓存</button>  '+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
@@ -138,12 +138,12 @@ $(function() {
 		});
 	});
 
-	// jquery.validate 自定义校验 “长度4-50位的小写字母、数字和下划线”
+	// jquery.validate 自定义校验 “长度4-50位的大小写字母、数字和下划线”
 	jQuery.validator.addMethod("projectName", function(value, element) {
 		var length = value.length;
-		var valid = /^[a-z0-9_]{4,50}$/;
+		var valid = /^[a-zA-Z0-9_]{4,50}$/;
 		return this.optional(element) || valid.test(value);
-	}, "正确格式为：长度4-20位的小写字母、数字和下划线");
+	}, "正确格式为：长度4-20位的大小写字母、数字和下划线");
 
 	// 新增
 	$(".add").click(function(){

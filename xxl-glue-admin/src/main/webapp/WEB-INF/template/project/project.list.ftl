@@ -20,7 +20,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>GLUE管理<small></small></h1>
+            <h1>项目管理<small></small></h1>
         </section>
 
         <!-- Main content -->
@@ -31,7 +31,7 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">GLUE列表</h3>
+                            <h3 class="box-title">项目列表</h3>
                             <button class="btn btn-info btn-xs pull-right" id="add">+新增项目</button>
                         </div>
                         <div class="box-body" >
