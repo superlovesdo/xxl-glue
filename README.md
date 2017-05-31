@@ -331,7 +331,6 @@ public class DemoGlueHandler03 implements GlueHandler {
 ```
 
 
-
 ## 五、系统设计
 
 ### 架构图
@@ -480,11 +479,10 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 - 5、导航菜单更新;
 - 6、底层代码重构, 结构优化;
 
-### 版本ING
+### 版本1.3.0
 - 1、项目分组：支持设置项目分组，以项目为维度进行GLUE分组管理；
 - 2、GLUE依赖注入逻辑优化，支持别名注入；
 - 3、广播机制优化：接收到GLUE刷新广播时校验GLUE源码version，避免冗余的刷新逻辑； 
-
 
 
 ### 规划中
