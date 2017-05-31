@@ -7,51 +7,36 @@ import java.util.Set;
  * @author xuxueli 2016-5-20 22:21:06
  */
 public class GlueMessage {
-	
-	/**
-	 * glue key (group_name)
-	 */
-	public String glueKey;
-	
-	/**
-	 * appnames that the glue apply to
-	 */
-	public Set<String> appNames;
-	
-	/**
-	 * type : 0-sync, 1-delete
-	 */
-	public GlueMessageType type;
 
-	public String getGlueKey() {
-		return glueKey;
+	private String glueName;		// glue key (group_name)
+	private Set<String> appnames;	// appnames, for glue need to fresh
+	private long version;			// version, for cache
+
+	/*public enum GlueMessageType{ CLEAR_CACHE, DELETE }
+	private GlueMessageType type; */
+
+	public String getGlueName() {
+		return glueName;
 	}
 
-	public void setGlueKey(String glueKey) {
-		this.glueKey = glueKey;
+	public void setGlueName(String glueName) {
+		this.glueName = glueName;
 	}
 
-	public Set<String> getAppNames() {
-		return appNames;
+	public Set<String> getAppnames() {
+		return appnames;
 	}
 
-	public void setAppNames(Set<String> appNames) {
-		this.appNames = appNames;
+	public void setAppnames(Set<String> appnames) {
+		this.appnames = appnames;
 	}
 
-	public GlueMessageType getType() {
-		return type;
+	public long getVersion() {
+		return version;
 	}
 
-	public void setType(GlueMessageType type) {
-		this.type = type;
+	public void setVersion(long version) {
+		this.version = version;
 	}
 
-	/**
-	 * type for glue message
-	 */
-	public enum GlueMessageType{
-		CLEAR_CACHE, DELETE
-	}
-	
 }

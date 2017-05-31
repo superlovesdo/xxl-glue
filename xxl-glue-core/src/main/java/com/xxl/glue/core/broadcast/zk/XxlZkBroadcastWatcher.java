@@ -85,7 +85,7 @@ public abstract class XxlZkBroadcastWatcher extends XxlZkClient implements Watch
 				stat = super.getClient().exists(path, true);
 			}
 			boolean ret = stat!=null?true:false;
-			logger.info(">>>>>>>>>>> XxlZkBroadcastWatcher watchTopic:" + ret);
+			logger.info(">>>>>>>>>>> XxlZkBroadcastWatcher watchTopic:{}, path:{}", ret, path);
 			return ret;
 		} catch (KeeperException e) {
 			logger.error(e.getMessage(), e);

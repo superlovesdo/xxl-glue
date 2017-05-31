@@ -1,14 +1,13 @@
 package com.xxl.glue.admin.service.impl;
 
-import com.xxl.glue.admin.core.model.GlueInfo;
 import com.xxl.glue.admin.core.model.CodeLog;
+import com.xxl.glue.admin.core.model.GlueInfo;
 import com.xxl.glue.admin.core.model.Project;
 import com.xxl.glue.admin.core.result.ReturnT;
-import com.xxl.glue.admin.dao.IGlueInfoDao;
 import com.xxl.glue.admin.dao.ICodeLogDao;
+import com.xxl.glue.admin.dao.IGlueInfoDao;
 import com.xxl.glue.admin.dao.IProjectDao;
 import com.xxl.glue.admin.service.IGlueInfoService;
-import com.xxl.glue.core.broadcast.GlueMessage.GlueMessageType;
 import com.xxl.glue.core.broadcast.XxlGlueBroadcaster;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -52,9 +51,6 @@ public class GlueInfoServiceImpl implements IGlueInfoService {
 			return new ReturnT<String>(500, "删除失败");
 		}
 		codeLogDao.delete(id);
-
-		// broadcast (pub)
-		XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), GlueMessageType.DELETE, null);
 
 		return ReturnT.SUCCESS;
 	}
@@ -128,7 +124,7 @@ public class GlueInfoServiceImpl implements IGlueInfoService {
 		}
 
 		// broadcast (pub)
-		boolean ret = XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), GlueMessageType.CLEAR_CACHE, appList);
+		boolean ret = XxlGlueBroadcaster.getInstance().procuceMsg(codeInfo.getName(), appList, codeInfo.getUpdateTime().getTime());
 
 		return ret?ReturnT.SUCCESS:ReturnT.FAIL;
 	}

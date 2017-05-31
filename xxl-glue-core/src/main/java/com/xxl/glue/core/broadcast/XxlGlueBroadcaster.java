@@ -33,18 +33,18 @@ public class XxlGlueBroadcaster extends XxlZkBroadcastWatcher {
 
 	/**
 	 * procuce msg
-	 * @param glueKey
-	 * @param type
-	 * @param appNames
+	 * @param glueName
+	 * @param appnames
+	 * @param version
 	 * @return
 	 */
-	public boolean procuceMsg(String glueKey, GlueMessage.GlueMessageType type, Set<String> appNames) {
-		String topicPath = GLUE_BROADCAST + "/" + glueKey;
+	public boolean procuceMsg(String glueName, Set<String> appnames, long version) {
+		String topicPath = GLUE_BROADCAST + "/" + glueName;
 
 		GlueMessage message = new GlueMessage();
-		message.setGlueKey(glueKey);
-		message.setAppNames(appNames);
-		message.setType(type);
+		message.setGlueName(glueName);
+		message.setAppnames(appnames);
+		message.setVersion(version);
 		String data = JacksonUtil.writeValueAsString(message);
 
 		return super.produce(topicPath, data);
@@ -71,7 +71,7 @@ public class XxlGlueBroadcaster extends XxlZkBroadcastWatcher {
 	@Override
 	public void consumeMsg(String path, String data) {
 		GlueMessage glueMessage = JacksonUtil.readValue(data, GlueMessage.class);
-		GlueFactory.clearCache(glueMessage);
+		GlueFactory.glueRefresh(glueMessage);
 	}
 
 }

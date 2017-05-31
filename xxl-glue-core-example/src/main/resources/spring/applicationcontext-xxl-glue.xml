@@ -7,7 +7,7 @@
 	<!-- ********************** 配置01：GLUE工厂，负责GLUE实例化和运行【必须】 ********************** -->
 
 	<!-- glueFactory -->
-	<bean id="glueFactory" class="com.xxl.glue.core.GlueFactory">
+	<bean id="glueFactory" class="com.xxl.glue.core.GlueFactory" init-method="init" destroy-method="destory" >
 		<!-- GLUE示例缓存失效时间，单位毫秒 -->
 		<property name="cacheTimeout" value="300000" />
 		<property name="appName" value="xxl-glue-core-exapmle" />
