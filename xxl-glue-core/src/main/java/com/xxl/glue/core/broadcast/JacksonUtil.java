@@ -1,11 +1,10 @@
 package com.xxl.glue.core.broadcast;
 
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,27 +12,25 @@ import java.util.Map;
 
 /**
  * Jackson util
- * 
- * 1、obj need private and set/get；
- * 2、do not support inner class；
- * 
+ * 1、obj need private and set/get； 2、do not support inner class；
  * @author xuxueli 2015-9-25 18:02:56
  */
 public class JacksonUtil {
-    private final static ObjectMapper objectMapper = new ObjectMapper();
-    public static ObjectMapper getInstance() {
-        return objectMapper;
-    }
+	private final static ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * bean、array、List、Map --> json
-     * 
-     * @param obj
-     * @return
-     * @throws Exception
-     */
-    public static String writeValueAsString(Object obj) {
-    	try {
+	public static ObjectMapper getInstance() {
+		return objectMapper;
+	}
+
+	/**
+	 * bean、array、List、Map --> json
+	 *
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public static String writeValueAsString(Object obj) {
+		try {
 			return getInstance().writeValueAsString(obj);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
@@ -42,19 +39,19 @@ public class JacksonUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * string --> bean、Map、List(array)
-     * 
-     * @param jsonStr
-     * @param clazz
-     * @return
-     * @throws Exception
-     */
-    public static <T> T readValue(String jsonStr, Class<T> clazz) {
-    	try {
+	/**
+	 * string --> bean、Map、List(array)
+	 *
+	 * @param jsonStr
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T> T readValue(String jsonStr, Class<T> clazz) {
+		try {
 			return getInstance().readValue(jsonStr, clazz);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
@@ -63,11 +60,13 @@ public class JacksonUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	return null;
-    }
-    public static <T> T readValueRefer(String jsonStr, Class<T> clazz) {
-    	try {
-			return getInstance().readValue(jsonStr, new TypeReference<T>() { });
+		return null;
+	}
+
+	public static <T> T readValueRefer(String jsonStr, Class<T> clazz) {
+		try {
+			return getInstance().readValue(jsonStr, new TypeReference<T>() {
+			});
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -75,17 +74,15 @@ public class JacksonUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	return null;
-    }
+		return null;
+	}
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 		try {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("aaa", "111");
 			map.put("bbb", "222");
-			String json = writeValueAsString(map);
-			System.out.println(json);
-			System.out.println(readValue(json, Map.class));
+			System.out.println(writeValueAsString(map));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

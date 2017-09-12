@@ -43,10 +43,11 @@ XXL-GLUE在功能上完全可以替代前者，只需要在可执行代码块中
 - [社区交流](http://www.xuxueli.com/page/community.html)
 
 ### 1.4 环境
-- Maven3+
-- Jdk1.7+
-- Tomcat7+
-- Mysql5.5+
+- JDK：1.7+
+- Servlet/JSP Spec：3.1/2.3
+- Tomcat：8.5.x
+- Mysql：5.6+
+- Maven：3+
 
 
 ## 二、快速入门
