@@ -493,6 +493,9 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 - 3、GLUE依赖注入逻辑优化，支持别名注入；
 - 4、广播机制优化：接收到GLUE刷新广播时校验GLUE源码version，避免冗余的刷新逻辑； 
 
+### 版本1.3.1
+- 1、项目推送maven中央仓库，groupId迁移至 "com.xuxueli"；
+- 2、规范maven依赖版本；
 
 ### TODO LIST
 - 4、用户管理；
