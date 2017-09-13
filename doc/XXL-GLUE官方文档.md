@@ -83,6 +83,18 @@ xxl.glue.login.password=123456
 编译War包部署即可。
 
 ### 3、部署部署 "GLUE接入Example项目"(xxl-glue-core-example)
+
+#### 客户端maven依赖
+```
+<!-- https://mvnrepository.com/artifact/com.xuxueli/xxl-glue-core -->
+<dependency>
+    <groupId>com.xuxueli</groupId>
+    <artifactId>xxl-glue-core</artifactId>
+    <version>1.3.1</version>
+</dependency>
+```
+
+#### 客户端配置文件
 配置文件位置：xxl-glue-core-example/resources/xxl-glue.properties
 
 ```
