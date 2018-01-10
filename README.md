@@ -1,7 +1,5 @@
 <p align="center">
-    <a href="http://www.xuxueli.com/xxl-glue/">
-        <img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/xxl-logo.jpg" width="150">
-    </a>
+    <img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/xxl-logo.jpg" width="150">
     <h3 align="center">XXL-GLUE</h3>
     <p align="center">
         XXL-JOB, a distributed logical management platform.
