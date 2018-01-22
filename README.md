@@ -7,6 +7,9 @@
         <a href="http://www.xuxueli.com/xxl-glue/"><strong>-- Home Page --</strong></a>
         <br>
         <br>
+        <a href="https://travis-ci.org/xuxueli/xxl-glue">
+            <img src="https://travis-ci.org/xuxueli/xxl-glue.svg?branch=master" >
+        </a>
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-glue/">
             <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-glue/badge.svg" >
         </a>
@@ -16,6 +19,9 @@
          <a href="http://www.gnu.org/licenses/gpl-3.0.html">
              <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
          </a>
+          <a href="http://www.xuxueli.com/page/donate.html">
+                <img src="https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square" >
+          </a>
     </p>    
 </p>
 
@@ -24,7 +30,7 @@
 XXL-GLUE is a distributed logical management platform, learning simple and extending the dynamic language support of the JVM. 
 Now, it's already open source, and many companies use it in production environments, real "out-of-the-box".
 
-XXL-GLUE 是一个分布式 "可执行逻辑" 管理平台, 学习简单，扩展JVM的动态语言支持。现已开放源代码并接入多家公司线上产品线，开箱即用。
+XXL-GLUE 是一个分布式 "可执行逻辑单元" 管理平台, 学习简单，扩展JVM的动态语言支持。现已开放源代码并接入多家公司线上产品线，开箱即用。
 
 
 ## Documentation
@@ -32,7 +38,7 @@ XXL-GLUE 是一个分布式 "可执行逻辑" 管理平台, 学习简单，扩�
 
 
 ## Features
-- 1、动态："可执行逻辑"，GLUE支持在线开发、动态推送更新、实时编译生效, 扩展JVM的动态语言支持;
+- 1、动态："可执行逻辑单元（GLUE）"支持在线开发、动态推送更新、实时编译生效, 扩展JVM的动态语言支持;
 - 2、Wed IDE：提供WedIDE，支持在线开发GLUE代码；
 - 3、推送更新：GLUE代码修改后，开发人员可手动触发GLUE更新广播，广播组件将会实时推送GLUE到接入方项目，从而实时更新GLUE；
 - 4、兼容Spring：GLUE代码中支持@Resource和@Autowired两种方式注入Spring容器中服务;
@@ -45,14 +51,14 @@ XXL-GLUE 是一个分布式 "可执行逻辑" 管理平台, 学习简单，扩�
 
 - [社区交流](http://www.xuxueli.com/page/community.html)
 
+## 接入登记
+更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-glue/issues/1 ) 登记，登记仅仅为了产品推广。
+
 
 ## Contributing
 Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/xuxueli/xxl-glue/issues/) to discuss a new feature or change.
 
 欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-glue/issues/) 讨论新特性或者变更。
-
-## 接入登记
-更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-glue/issues/1 ) 登记，登记仅仅为了产品推广。
 
 
 ## Copyright and License
@@ -65,9 +71,6 @@ This product is open source and free, and will continue to provide free communit
 
 
 ## Donate
-No matter how much the amount is enough to express your thought, thank you very much ：）
+No matter how much the amount is enough to express your thought, thank you very much ：）     [To donate](http://www.xuxueli.com/page/donate.html )
 
-无论金额多少都足够表达您这份心意，非常感谢 ：）    [XXL系列捐赠记录](http://www.xuxueli.com/page/donate.html )
-
-微信：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-wechat.png" width="200">
-支付宝：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-alipay.jpg" width="200">
+无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )

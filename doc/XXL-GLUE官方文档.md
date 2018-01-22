@@ -7,7 +7,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-GLUE 是一个分布式环境下的 "可执行逻辑" 管理平台, 学习简单，扩展JVM的动态语言支持。现已开放源代码并接入多家公司线上产品线，开箱即用。
+XXL-GLUE 是一个分布式环境下的 "可执行逻辑单元" 管理平台, 学习简单，扩展JVM的动态语言支持。现已开放源代码并接入多家公司线上产品线，开箱即用。
 
 >GLUE：即"可执行逻辑"，本质上是一段可执行的代码。GLUE可以方便的嵌入业务代码中, GLUE中逻辑代码支持在线开发、动态推送更新、实时编译生效。
 可以节省部分因为项目编译、打包、部署和重启线上机器所带来的时间和人工消耗, 提高开发效率。
@@ -17,7 +17,7 @@ XXL-GLUE 是一个分布式环境下的 "可执行逻辑" 管理平台, 学习�
 XXL-GLUE在功能上完全可以替代前者，只需要在可执行代码块中返回配置即可，支持返回任意类型配置数据。XXL-GLUE主要作用是托管"可执行逻辑代码"，将会为开发者代码不一样的开发体验。
 
 ### 1.2 特性
-- 1、动态："可执行逻辑"，GLUE支持在线开发、动态推送更新、实时编译生效, 扩展JVM的动态语言支持;
+- 1、动态："可执行逻辑单元（GLUE）"支持在线开发、动态推送更新、实时编译生效, 扩展JVM的动态语言支持;
 - 2、Wed IDE：提供WedIDE，支持在线开发GLUE代码；
 - 3、推送更新：GLUE代码修改后，开发人员可手动触发GLUE更新广播，广播组件将会实时推送GLUE到接入方项目，从而实时更新GLUE；
 - 4、兼容Spring：GLUE代码中支持@Resource和@Autowired两种方式注入Spring容器中服务;
@@ -530,7 +530,4 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 
 ---
 ### 捐赠
-无论金额多少都足够表达您这份心意，非常感谢 ：）    [XXL系列捐赠记录](http://www.xuxueli.com/page/donate.html )
-
-微信：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-wechat.png" width="200">
-支付宝：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-alipay.jpg" width="200">
+无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )
