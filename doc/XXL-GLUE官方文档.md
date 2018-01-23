@@ -35,7 +35,7 @@ XXL-GLUE在功能上完全可以替代前者，只需要在可执行代码块中
 源码仓库地址 | Release Download
 --- | ---
 [https://github.com/xuxueli/xxl-glue](https://github.com/xuxueli/xxl-glue) | [Download](https://github.com/xuxueli/xxl-glue/releases)
-[https://git.oschina.net/xuxueli0323/xxl-glue](https://git.oschina.net/xuxueli0323/xxl-glue) | [Download](https://git.oschina.net/xuxueli0323/xxl-glue/releases)  
+[https://gitee.com/xuxueli0323/xxl-glue](https://gitee.com/xuxueli0323/xxl-glue) | [Download](https://gitee.com/xuxueli0323/xxl-glue/releases)  
 
 
 ##### 技术交流群 (仅作技术交流)
