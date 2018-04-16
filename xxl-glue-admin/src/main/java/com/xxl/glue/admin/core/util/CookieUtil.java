@@ -43,7 +43,6 @@ public class CookieUtil {
 	 * @param key
 	 * @param value
 	 * @param maxAge
-	 * @param domain
 	 */
 	private static void set(HttpServletResponse response, String key, String value, int maxAge, String path) {
 		Cookie cookie = new Cookie(key, value);
@@ -54,7 +53,7 @@ public class CookieUtil {
 
 	private static void set(HttpServletResponse response, String key, String value, String domain, int maxAge, String path) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setDomain(domain);	// Cookie所在的域,如t1.dianping.com和t2.dianping.com的共用域.dianping.com;t1.dianping.com为私有的域；
+		cookie.setDomain(domain);	// Cookie所在的域,如t1.xxx.com和t2.xxx.com的共用域.xxx.com;t1.xxx.com为私有的域；
 		cookie.setMaxAge(maxAge);	// Cookie过期时间,单位/秒
 		cookie.setPath(path);		// Cookie适用的路径
 		response.addCookie(cookie);
