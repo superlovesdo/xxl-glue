@@ -509,6 +509,11 @@ GLUE底层基于Groovy实现，Groovy之前使用时曾经出现过频繁Full GC
 - 1、项目推送maven中央仓库，groupId迁移至 "com.xuxueli"；
 - 2、规范maven依赖版本；
 
+### 版本 v1.3.2 Release Notes[迭代中]
+- [迭代中]项目迁移至SpringBoot格式；
+- [迭代中]取消spring强依赖；
+
+
 ### TODO LIST
 - 4、用户管理；
 - 5、权限管理；
