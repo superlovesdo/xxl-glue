@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- sv broadcast -->
+    <bean id="bkBroadcaster" class="com.bk.sv.core.broadcast.BkGlueBroadcaster" init-method="getClient"
+          destroy-method="close">
+        <constructor-arg index="0" value="${sv.zkserver}"/>
+    </bean>
+
+</beans>
